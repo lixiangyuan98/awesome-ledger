@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">岳岳的账簿</string>
+    <string name="app_name">AwesomeLedger</string>
     <string name="action_settings">设置</string>
     <string name="add_item_title">新建</string>
     <string name="details_tab">明细</string>

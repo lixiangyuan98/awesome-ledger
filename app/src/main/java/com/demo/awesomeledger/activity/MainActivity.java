@@ -3,23 +3,22 @@ package com.demo.awesomeledger.activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.TabLayout;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
-import android.text.Layout;
 import android.text.SpannableString;
 import android.text.Spanned;
-import android.text.style.AlignmentSpan;
 import android.text.style.RelativeSizeSpan;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 import com.demo.awesomeledger.R;
+import com.demo.awesomeledger.fragment.DetailFragment;
+import com.demo.awesomeledger.fragment.OverviewFragment;
 
-import java.text.DateFormat;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
@@ -29,10 +28,6 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        // 设置ToolBar
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
 
         // 设置Fab
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.add_item);
@@ -46,6 +41,9 @@ public class MainActivity extends AppCompatActivity {
 
         // 设置月份, 收支
         setBriefInfo();
+
+        // 设置Tab
+        setTab();
     }
 
     /* 设置中间信息栏的信息 */
@@ -74,5 +72,36 @@ public class MainActivity extends AppCompatActivity {
         incomeString.setSpan(new RelativeSizeSpan(1.5f), 5,
                 incomeString.length(), Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
         incomeTextView.setText(incomeString);
+    }
+
+    private void setTab() {
+        ViewPager viewPager = (ViewPager)findViewById(R.id.main_view_pager);
+        TabLayout tabLayout = (TabLayout)findViewById(R.id.main_tab);
+
+        viewPager.setAdapter(new FragmentPagerAdapter(getSupportFragmentManager()) {
+            @Override
+            public Fragment getItem(int position) {
+                if (position == 0) {
+                    return new DetailFragment();
+                } else {
+                    return new OverviewFragment();
+                }
+            }
+
+            @Override
+            public int getCount() {
+                return 2;
+            }
+
+            @Override
+            public CharSequence getPageTitle(int position) {
+                if (position == 0) {
+                    return "明细";
+                } else {
+                    return "报表";
+                }
+            }
+        });
+        tabLayout.setupWithViewPager(viewPager);
     }
 }

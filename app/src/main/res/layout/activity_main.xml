@@ -7,31 +7,24 @@
         android:layout_height="match_parent"
         tools:context="com.demo.awesomeledger.activity.MainActivity">
 
-    <android.support.design.widget.AppBarLayout
-            android:layout_height="wrap_content"
+    <LinearLayout
+            android:orientation="vertical"
             android:layout_width="match_parent"
-            android:theme="@style/AppTheme.AppBarOverlay">
-
-        <!-- 顶部标题栏 -->
-        <android.support.v7.widget.Toolbar
-                android:id="@+id/toolbar"
-                android:layout_width="match_parent"
-                android:layout_height="?attr/actionBarSize"
-                android:background="?attr/colorPrimary"
-                app:popupTheme="@style/AppTheme.PopupOverlay"/>
+            android:layout_height="match_parent">
 
         <!-- 中间信息栏 -->
         <LinearLayout
                 android:orientation="horizontal"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-        >
+                android:layout_height="wrap_content"
+                android:background="@color/colorPrimary">
 
             <!-- 月份 -->
             <TextView
                     android:id="@+id/month"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:textColor="@android:color/white"
                     android:paddingHorizontal="@dimen/padding_mini"
                     android:layout_weight="1"/>
             <!-- 支出 -->
@@ -39,6 +32,7 @@
                     android:id="@+id/outgoing"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:textColor="@android:color/white"
                     android:paddingHorizontal="@dimen/padding_mini"
                     android:layout_weight="1"/>
             <!-- 收入 -->
@@ -46,32 +40,35 @@
                     android:id="@+id/income"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:textColor="@android:color/white"
                     android:paddingHorizontal="@dimen/padding_mini"
                     android:layout_weight="1"/>
         </LinearLayout>
 
-        <!-- Tab -->
-        <android.support.design.widget.TabLayout
+        <LinearLayout
+                android:orientation="vertical"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:tabIndicatorColor="@android:color/white"
-                app:tabTextAppearance="@style/Text">
+                android:layout_height="wrap_content">
+            <android.support.design.widget.TabLayout
+                    android:id="@+id/main_tab"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@color/colorPrimary"
+                    app:tabTextColor="@color/colorTabText"
+                    app:tabSelectedTextColor="@color/colorSelectedTabText"
+                    app:tabIndicatorColor="@color/colorSelectedTabText"
+                    app:tabTextAppearance="@style/Text">
 
-            <!-- 详细信息tab -->
-            <android.support.design.widget.TabItem
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:background="@color/colorAccent"
-                    android:text="@string/details_tab"/>
-            <!-- 总览tab -->
-            <android.support.design.widget.TabItem
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:background="@color/colorAccent"
-                    android:text="@string/overview_tab"/>
-        </android.support.design.widget.TabLayout>
+            </android.support.design.widget.TabLayout>
+            <android.support.v4.view.ViewPager
+                    android:id="@+id/main_view_pager"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
 
-    </android.support.design.widget.AppBarLayout>
+            </android.support.v4.view.ViewPager>
+        </LinearLayout>
+
+    </LinearLayout>
 
     <!-- 新增按钮 -->
     <android.support.design.widget.FloatingActionButton

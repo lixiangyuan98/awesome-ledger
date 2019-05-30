@@ -3,4 +3,6 @@
     <color name="colorPrimary">#8f9ce2</color>
     <color name="colorPrimaryDark">#8f9ce2</color>
     <color name="colorAccent">#565dbc</color>
+    <color name="colorSelectedTabText">#ffffff</color>
+    <color name="colorTabText">#97e6e6e6</color>
 </resources>

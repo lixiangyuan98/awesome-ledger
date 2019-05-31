@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.RecyclerView;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.*;
@@ -24,7 +25,7 @@ public class AddItemActivity extends AppCompatActivity implements View.OnClickLi
     private int year, month, day;
     private StringBuffer date;
     private Context context;
-
+    private RecyclerView dispositon;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -70,6 +71,9 @@ public class AddItemActivity extends AppCompatActivity implements View.OnClickLi
                 // TODO Auto-generated method stub
             }
         });
+
+        //类别描述部分
+        dispositon = (RecyclerView) findViewById(R.id.dispositon);
     }
 
     /**

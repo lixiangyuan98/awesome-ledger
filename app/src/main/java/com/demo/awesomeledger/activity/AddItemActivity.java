@@ -73,7 +73,7 @@ public class AddItemActivity extends AppCompatActivity implements View.OnClickLi
         });
 
         //类别描述部分
-        dispositon = (RecyclerView) findViewById(R.id.dispositon);
+        dispositon = (RecyclerView) findViewById(R.id.disposition);
     }
 
     /**

@@ -1,25 +1,19 @@
 package com.demo.awesomeledger.activity;
 
+import android.app.AlertDialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
-import android.widget.ArrayAdapter;
-import android.widget.Spinner;
-import android.widget.TextView;
 import android.view.View;
-import android.widget.SimpleAdapter;
-import android.widget.AdapterView;
-import android.widget.DatePicker;
-import android.app.AlertDialog;
-import android.content.Context;
-import android.content.DialogInterface;
-
-import java.util.Calendar;
+import android.widget.*;
 import com.demo.awesomeledger.R;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 public class AddItemActivity extends AppCompatActivity implements View.OnClickListener, DatePicker.OnDateChangedListener{
@@ -67,7 +61,7 @@ public class AddItemActivity extends AppCompatActivity implements View.OnClickLi
         //加载适配器
         spinner.setAdapter(arr_adapter);
         //绑定事件监听
-        spinner.setOnItemSelectedListener(new Spinner.OnItemSelectedListener() {//选择item的选择点击监听事件
+        spinner.setOnItemSelectedListener(new Spinner.OnItemSelectedListener() {  //选择item的选择点击监听事件
             public void onItemSelected(AdapterView<?> arg0, View arg1,
                                        int position, long arg3) {
                 // TODO Auto-generated method stub
@@ -77,6 +71,7 @@ public class AddItemActivity extends AppCompatActivity implements View.OnClickLi
             }
         });
     }
+
     /**
      * 获取当前的日期和时间
      */
@@ -85,7 +80,7 @@ public class AddItemActivity extends AppCompatActivity implements View.OnClickLi
         year = calendar.get(Calendar.YEAR);
         month = calendar.get(Calendar.MONTH);
         day = calendar.get(Calendar.DAY_OF_MONTH);
-        tvDate.setText(date.append(String.valueOf(month+1)).append("月").append(day).append("日▼"));
+        tvDate.setText(date.append(String.valueOf(month+1)).append("月").append(day).append("日"));
 
     }
 
@@ -100,7 +95,7 @@ public class AddItemActivity extends AppCompatActivity implements View.OnClickLi
                         if (date.length() > 0) { //清除上次记录的日期
                             date.delete(0, date.length());
                         }
-                        tvDate.setText(date.append(String.valueOf(month+1)).append("月").append(day).append("日▼"));
+                        tvDate.setText(date.append(String.valueOf(month+1)).append("月").append(day).append("日"));
                         dialog.dismiss();
                     }
                 });
@@ -122,13 +117,13 @@ public class AddItemActivity extends AppCompatActivity implements View.OnClickLi
                 break;
         }
     }
+
     @Override
     public void onDateChanged(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
         this.year = year;
         this.month = monthOfYear;
         this.day = dayOfMonth;
     }
-
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -141,6 +136,5 @@ public class AddItemActivity extends AppCompatActivity implements View.OnClickLi
                 return super.onOptionsItemSelected(item);
         }
     }
-
 
 }

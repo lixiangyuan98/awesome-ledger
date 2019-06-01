@@ -25,8 +25,8 @@ public class ItemDao extends BaseDao<Item> {
     private ContentValues getContentValues(@NonNull Item item) {
         ContentValues values = new ContentValues();
         values.put("date", item.getDate().getTime());
-        values.put("type", item.getItemType().getType());
-        values.put("kind", item.getItemKind().getKind());
+        values.put("type", item.getItemType().name());
+        values.put("kind", item.getItemKind().name());
         values.put("money", item.getMoney());
         values.put("comment", item.getComment());
         return values;
@@ -41,8 +41,8 @@ public class ItemDao extends BaseDao<Item> {
         List<Item> queryResults = new ArrayList<>(cursor.getCount());
         while (cursor.moveToNext()) {
             Item item = new Item(cursor.getInt(0), new Date(cursor.getLong(1)),
-                    Enum.valueOf(ItemType.class, cursor.getString(2)),
-                    Enum.valueOf(ItemKind.class, cursor.getString(3)),
+                    ItemType.valueOf(cursor.getString(2)),
+                    ItemKind.valueOf(cursor.getString(3)),
                     cursor.getDouble(4),
                     cursor.getString(5));
             queryResults.add(item);

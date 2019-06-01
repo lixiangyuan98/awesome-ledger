@@ -15,8 +15,16 @@ public class Item {
     private Double money;
     private String comment;
 
+    public Item(Integer id, Date date, ItemType itemType, ItemKind itemKind, Double money, String comment) {
+        this.id = id;
+        this.date = date;
+        this.itemType = itemType;
+        this.itemKind = itemKind;
+        this.money = money;
+        this.comment = comment;
+    }
+
     public Item(Date date, ItemType itemType, ItemKind itemKind, Double money, String comment) {
-        // TODO: id生成
         this.date = date;
         this.itemType = itemType;
         this.itemKind = itemKind;
@@ -26,10 +34,6 @@ public class Item {
 
     public Integer getId() {
         return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
     }
 
     public Date getDate() {

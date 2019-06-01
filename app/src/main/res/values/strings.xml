@@ -2,6 +2,9 @@
     <string name="app_name">Awesome Ledger</string>
     <string name="action_settings">设置</string>
     <string name="add_item_title">新建</string>
-    <string name="item_type_title">分类</string>
-    <string name="item_date_title">时间</string>
+    <string name="item_type_title">类型：</string>
+    <string name="item_date_title">时间：</string>
+    <string name="item_amount_title">金额：</string>
+    <string name="item_kind_title">分类：</string>
+    <string name="item_note_title">备注：</string>
 </resources>

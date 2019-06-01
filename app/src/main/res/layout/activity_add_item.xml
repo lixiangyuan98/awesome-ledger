@@ -27,7 +27,7 @@
 
             <Spinner
                     android:layout_height="wrap_content"
-                    android:id="@+id/kind"
+                    android:id="@+id/type"
                     android:layout_weight="1"
                     android:layout_width="120dp"/>
 
@@ -47,11 +47,46 @@
                     android:paddingLeft="30dp"
                     android:textSize="18sp"/>
         </LinearLayout>
-
-        <android.support.v7.widget.RecyclerView
-                android:id="@+id/disposition"
+        <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="217dp"
+                android:layout_height="match_parent" android:paddingLeft="30dp" android:paddingTop="10dp">
+            <TextView
+                    android:text="@string/item_kind_title"
+                    android:layout_width="30dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1" android:id="@+id/textView51"/>
+            <Spinner
+                    android:layout_height="wrap_content"
+                    android:id="@+id/kind"
+                    android:layout_weight="1"
+                    android:layout_width="120dp"/>
+        </LinearLayout>
+        <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="201dp"
+                android:layout_height="match_parent" android:paddingLeft="30dp" android:paddingTop="10dp">
+            <TextView
+                    android:text="@string/item_amount_title"
+                    android:layout_width="64dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1" android:id="@+id/textView5"/>
+            <EditText
+                    android:layout_height="wrap_content"
+                    android:inputType="number|numberDecimal"
+                    android:ems="10"
+                    android:id="@+id/editText" android:layout_weight="1" android:layout_width="133dp"/>
+        </LinearLayout>
+        <TextView
+                android:text="@string/item_note_title"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"/>
+                android:layout_height="wrap_content" android:id="@+id/textView6" android:paddingLeft="30dp"
+                android:paddingTop="10dp"/>
+        <MultiAutoCompleteTextView
+                android:text="内容"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" android:id="@+id/multiAutoCompleteTextView"
+                android:paddingLeft="30dp" android:paddingTop="10dp"/>
 
     </LinearLayout>
 

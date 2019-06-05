@@ -4,7 +4,7 @@
         xmlns:app="http://schemas.android.com/apk/res-auto"
         xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         tools:context="com.demo.awesomeledger.activity.AddItemActivity">
 
     <LinearLayout
@@ -21,21 +21,21 @@
 
             <TextView
                     android:text="@string/item_type_title"
-                    android:layout_width="wrap_content"
+                    android:layout_width="64dp"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"/>
+                    android:layout_weight="0"/>
 
             <Spinner
                     android:layout_height="wrap_content"
                     android:id="@+id/type"
-                    android:layout_weight="1"
+                    android:layout_weight="0"
                     android:layout_width="120dp"/>
 
             <TextView
                     android:text="@string/item_date_title"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"/>
+                    android:layout_weight="0"/>
 
             <TextView
                     android:id="@+id/dateView"
@@ -53,14 +53,27 @@
                 android:layout_height="match_parent" android:paddingLeft="30dp" android:paddingTop="10dp">
             <TextView
                     android:text="@string/item_kind_title"
-                    android:layout_width="30dp"
+                    android:layout_width="64dp"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1" android:id="@+id/textView51"/>
+                    android:layout_weight="0" android:id="@+id/textView51"/>
             <Spinner
                     android:layout_height="wrap_content"
                     android:id="@+id/kind"
-                    android:layout_weight="1"
+                    android:layout_weight="0"
                     android:layout_width="120dp"/>
+        </LinearLayout>
+        <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" android:paddingLeft="30dp" android:paddingTop="10dp">
+            <TextView
+                    android:text="@string/item_location_title"
+                    android:layout_height="wrap_content" android:id="@+id/textView4"
+                    android:layout_width="64dp"/>
+            <TextView
+                    android:text="@string/item_loaction_content"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" android:id="@+id/location" android:layout_weight="1"/>
         </LinearLayout>
         <LinearLayout
                 android:orientation="horizontal"
@@ -70,23 +83,58 @@
                     android:text="@string/item_amount_title"
                     android:layout_width="64dp"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1" android:id="@+id/textView5"/>
+                    android:id="@+id/textView5" android:layout_weight="0"/>
             <EditText
                     android:layout_height="wrap_content"
                     android:inputType="number|numberDecimal"
                     android:ems="10"
-                    android:id="@+id/editText" android:layout_weight="1" android:layout_width="133dp"/>
+                    android:id="@+id/editText" android:layout_weight="0" android:layout_width="133dp"/>
         </LinearLayout>
         <TextView
                 android:text="@string/item_note_title"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" android:id="@+id/textView6" android:paddingLeft="30dp"
                 android:paddingTop="10dp"/>
-        <MultiAutoCompleteTextView
-                android:text="内容"
+        <EditText
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" android:id="@+id/multiAutoCompleteTextView"
-                android:paddingLeft="30dp" android:paddingTop="10dp"/>
+                android:layout_height="wrap_content"
+                android:inputType="textMultiLine"
+                android:ems="10"
+                android:id="@+id/note" android:layout_marginLeft="30dp" android:layout_marginRight="30dp"
+                android:hint="在此输入备注"/>
+        <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+            <LinearLayout
+                    android:orientation="horizontal"
+                    android:layout_width="310dp"
+                    android:layout_height="match_parent" android:layout_weight="1">
+            </LinearLayout>
+            <LinearLayout
+                    android:orientation="horizontal"
+                    android:layout_height="wrap_content" android:layout_weight="1" android:layout_width="match_parent">
+                <android.support.design.widget.FloatingActionButton
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:clickable="true" app:srcCompat="@mipmap/ic_cancel_64" android:id="@+id/cancelBtn"
+                        app:backgroundTint="?android:attr/colorPressedHighlight" android:layout_gravity="bottom"
+                        android:layout_margin="16dp" android:layout_weight="1"/>
+            </LinearLayout>
+            <LinearLayout
+                    android:orientation="horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" android:layout_weight="1">
+                <android.support.design.widget.FloatingActionButton
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:clickable="true" app:srcCompat="@mipmap/ic_ok_64" android:id="@+id/saveBtn"
+                        app:backgroundTint="@android:color/holo_green_dark"
+                        android:layout_gravity="bottom|right|center"
+                        android:layout_margin="16dp" android:layout_weight="1" android:paddingBottom="0dp"
+                        android:paddingEnd="0dp" android:paddingStart="0dp" android:paddingLeft="0dp"/>
+            </LinearLayout>
+        </LinearLayout>
 
     </LinearLayout>
 

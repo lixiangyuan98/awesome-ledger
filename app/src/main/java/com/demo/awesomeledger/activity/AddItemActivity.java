@@ -256,11 +256,11 @@ public class AddItemActivity extends AppCompatActivity implements View.OnClickLi
         saveFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                /*类型：type
-                  细分：kind
-                  金额：amount
-                  时间：年：year，月：month，日：day
-                  备注：noteView.getText()
+                /*类型：type  -> String
+                  细分：kind  -> String
+                  金额：amount -> double
+                  时间：年：year，月：month，日：day  -> int
+                  备注：noteView.getText()  -> String
                 */
                 finish();
             }

@@ -1,4 +1,4 @@
-package com.demo.awesomeledger;
+package com.demo.awesomeledger.listener;
 
 import android.widget.TextView;
 import com.baidu.location.BDAbstractLocationListener;
@@ -7,11 +7,11 @@ import android.util.Log;
 
 
 
-public class MyLocationListener extends BDAbstractLocationListener {
+public class LocationListener extends BDAbstractLocationListener {
     private String locationDescribe;
     private TextView locationView;
     private static final String TAG = "MyActivity";
-    public MyLocationListener(TextView textView){
+    public LocationListener(TextView textView){
         this.locationView = textView;
         Log.d(TAG, "currentX=" + "11");
     }

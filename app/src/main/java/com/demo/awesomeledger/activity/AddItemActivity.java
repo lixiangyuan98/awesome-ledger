@@ -3,35 +3,27 @@ package com.demo.awesomeledger.activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.RecyclerView;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.MenuItem;
 import android.view.View;
-import android.text.TextWatcher;
-import android.widget.EditText;
-import android.text.Editable;
 import android.widget.*;
+import com.baidu.location.LocationClient;
+import com.baidu.location.LocationClientOption;
+import com.demo.awesomeledger.listener.LocationListener;
 import com.demo.awesomeledger.R;
-import com.demo.awesomeledger.bean.Item;
 import com.demo.awesomeledger.util.ItemKind;
-import com.demo.awesomeledger.MyLocationListener;
 
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
-import java.util.regex.Pattern;
 import java.util.regex.Matcher;
-import android.util.Log;
-
-import com.baidu.location.BDLocation;
-import com.baidu.location.BDLocationListener;
-import com.baidu.location.LocationClient;
-import com.baidu.location.LocationClientOption;
+import java.util.regex.Pattern;
 
 
 
@@ -55,8 +47,7 @@ public class AddItemActivity extends AppCompatActivity implements View.OnClickLi
     private Context context;
     private int selectionStart;
     private int selectionEnd;
-    public LocationClient mLocationClient;
-    private MyLocationListener myListener;
+    private LocationClient mLocationClient;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -87,15 +78,13 @@ public class AddItemActivity extends AppCompatActivity implements View.OnClickLi
         initDateTime();
         initFAB();
     }
+
     //初始化地理信息
     private void initLocation(){
         locationView = (TextView) findViewById(R.id.location);
-        myListener = new MyLocationListener(locationView);
+        LocationListener locationListener = new LocationListener(locationView);
         mLocationClient.start();
-
     }
-
-
 
     //初始化控件
     private void initView(){
@@ -148,7 +137,6 @@ public class AddItemActivity extends AppCompatActivity implements View.OnClickLi
             }
         });
 
-
         //总额输入部分
         edittext = (EditText) findViewById(R.id.editText);
         edittext.setText("0");
@@ -181,11 +169,13 @@ public class AddItemActivity extends AppCompatActivity implements View.OnClickLi
         });
 
     }
-    public static boolean isOnlyPointNumber(String number) {//保留两位小数正则
+
+    private static boolean isOnlyPointNumber(String number) {//保留两位小数正则
         Pattern pattern = Pattern.compile("^\\d+\\.?\\d{0,2}$");
         Matcher matcher = pattern.matcher(number);
         return matcher.matches();
     }
+
     /**
      * 获取当前的日期和时间
      */

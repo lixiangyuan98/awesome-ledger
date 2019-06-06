@@ -13,9 +13,8 @@ import android.text.TextWatcher;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.*;
-import com.baidu.location.LocationClient;
-import com.baidu.location.LocationClientOption;
-import com.demo.awesomeledger.listener.LocationListener;
+import android.util.Log;
+
 import com.demo.awesomeledger.R;
 import com.demo.awesomeledger.util.ItemKind;
 
@@ -24,6 +23,12 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import com.amap.api.location.AMapLocation;
+import com.amap.api.location.AMapLocationListener;
+import com.amap.api.location.AMapLocationClient;
+import com.amap.api.location.AMapLocationClientOption;
+import com.amap.api.location.AMapLocationClientOption.AMapLocationMode;
 
 
 
@@ -47,12 +52,16 @@ public class AddItemActivity extends AppCompatActivity implements View.OnClickLi
     private Context context;
     private int selectionStart;
     private int selectionEnd;
-    private LocationClient mLocationClient;
+    //声明AMapLocationClient类对象
+//声明AMapLocationClient类对象
+    public AMapLocationClient mLocationClient;
+    //声明定位回调监听器
+    public AMapLocationListener mLocationListener;
+    public AMapLocationClientOption mLocationOption;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mLocationClient = new LocationClient(getApplicationContext());
         setContentView(R.layout.activity_add_item);
         //设置ActionBar
         ActionBar actionBar = getSupportActionBar();
@@ -65,26 +74,12 @@ public class AddItemActivity extends AppCompatActivity implements View.OnClickLi
 
         date = new StringBuffer();
         context = this;
-        //设置地百度API参数
-        LocationClientOption option = new LocationClientOption();
-        //可选，是否需要位置描述信息，默认为不需要，即参数为false
-        //如果开发者需要获得当前点的位置信息，此处必须为true
-        option.setIsNeedLocationDescribe(true);
-        //mLocationClient为第二步初始化过的LocationClient对象
-        //需将配置好的LocationClientOption对象，通过setLocOption方法传递给LocationClient对象使用
-        mLocationClient.setLocOption(option);
         initView();
-        initLocation();
         initDateTime();
         initFAB();
+        initPosotion();
     }
 
-    //初始化地理信息
-    private void initLocation(){
-        locationView = (TextView) findViewById(R.id.location);
-        LocationListener locationListener = new LocationListener(locationView);
-        mLocationClient.start();
-    }
 
     //初始化控件
     private void initView(){
@@ -167,6 +162,8 @@ public class AddItemActivity extends AppCompatActivity implements View.OnClickLi
                 amount = Double.parseDouble(edittext.getText().toString());
             }
         });
+
+        locationView = (TextView) findViewById(R.id.location);
 
     }
 
@@ -263,6 +260,44 @@ public class AddItemActivity extends AppCompatActivity implements View.OnClickLi
                 finish();
             }
         });
+    }
+
+    private void initPosotion(){
+        mLocationClient = null;
+        //声明定位回调监听器
+        mLocationListener = new AMapLocationListener(){
+            @Override
+            public void onLocationChanged(AMapLocation amapLocation) {
+                if (amapLocation != null) {
+                    if (amapLocation.getErrorCode() == 0) {
+                        //可在其中解析amapLocation获取相应内容。
+                        //地址，如果option中设置isNeedAddress为false，则没有此结果，网络定位结果中会有地址信息，GPS定位不返回地址信息。
+                        String dis = amapLocation.getAddress();
+                        locationView.setText(dis);
+                    }else {
+                        //定位失败时，可通过ErrCode（错误码）信息来确定失败的原因，errInfo是错误信息，详见错误码表。
+                    }
+                }
+            }
+        };
+        //初始化定位
+        mLocationClient = new AMapLocationClient(getApplicationContext());
+        //设置定位回调监听
+        mLocationClient.setLocationListener(mLocationListener);
+        //初始化AMapLocationClientOption对象
+        mLocationOption = new AMapLocationClientOption();
+        //设置定位模式为AMapLocationMode.Hight_Accuracy，高精度模式。
+        mLocationOption.setLocationMode(AMapLocationMode.Hight_Accuracy);
+        //获取一次定位结果：
+        //该方法默认为false。
+        mLocationOption.setOnceLocation(true);
+
+        //获取最近3s内精度最高的一次定位结果：
+        //设置setOnceLocationLatest(boolean b)接口为true，启动定位时SDK会返回最近3s内精度最高的一次定位结果。如果设置其为true，setOnceLocation(boolean b)接口也会被设置为true，反之不会，默认为false。
+        mLocationOption.setOnceLocationLatest(true);
+        mLocationClient.setLocationOption(mLocationOption);
+        //启动定位
+        mLocationClient.startLocation();
     }
 
 }

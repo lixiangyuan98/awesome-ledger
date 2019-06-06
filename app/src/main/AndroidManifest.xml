@@ -22,7 +22,6 @@
                 android:name=".activity.AddItemActivity"
                 android:label="@string/add_item_title">
         </activity>
-        <service android:name="com.baidu.location.f" android:enabled="true" android:process=":remote"> </service>
         <meta-data
                 android:name="com.baidu.lbsapi.API_KEY"
                 android:value="x0gOkA4jD1Cd1zGNOtQoBN9rsGYP5T0I" />

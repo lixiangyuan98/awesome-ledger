@@ -12,22 +12,34 @@ public class Item {
     private Date date;
     private ItemType itemType;
     private ItemKind itemKind;
+    private String address;
     private Double money;
     private String comment;
 
-    public Item(Integer id, Date date, ItemType itemType, ItemKind itemKind, Double money, String comment) {
+    public Item() {
+        this.date = new Date();
+        this.address = "";
+        this.money = 0D;
+        this.comment = "";
+    }
+
+    public Item(Integer id, Date date, ItemType itemType, ItemKind itemKind,
+                String address, Double money, String comment) {
         this.id = id;
         this.date = date;
         this.itemType = itemType;
         this.itemKind = itemKind;
+        this.address = address;
         this.money = money;
         this.comment = comment;
     }
 
-    public Item(Date date, ItemType itemType, ItemKind itemKind, Double money, String comment) {
+    public Item(Date date, ItemType itemType, ItemKind itemKind,
+                String address, Double money, String comment) {
         this.date = date;
         this.itemType = itemType;
         this.itemKind = itemKind;
+        this.address = address;
         this.money = money;
         this.comment = comment;
     }
@@ -58,6 +70,14 @@ public class Item {
 
     public void setItemKind(ItemKind itemKind) {
         this.itemKind = itemKind;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
     }
 
     public Double getMoney() {

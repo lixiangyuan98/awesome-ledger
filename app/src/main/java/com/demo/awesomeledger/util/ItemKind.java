@@ -18,7 +18,7 @@ public enum ItemKind {
 
     private String kind;
 
-    private ItemKind(String kind) {
+    ItemKind(String kind) {
         this.kind = kind;
     }
 

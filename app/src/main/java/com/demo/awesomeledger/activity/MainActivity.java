@@ -2,7 +2,6 @@ package com.demo.awesomeledger.activity;
 
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -31,7 +30,7 @@ import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity {
 
-    private int year, month, day;
+    private Integer year, month, day;
     private TextView monthTextView;
     private Calendar calendar = Calendar.getInstance();
     private final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy年\nMM月▼", Locale.CHINA);
@@ -42,27 +41,27 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        monthTextView = (TextView)findViewById(R.id.month);
+        monthTextView = findViewById(R.id.month);
         // 设置Fab
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.add_item);
+        FloatingActionButton fab = findViewById(R.id.add_item);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(MainActivity.this, AddItemActivity.class);
+                intent.putExtra("isNew", true);
                 startActivity(intent);
             }
         });
         // 设置月份, 收支
         setBriefInfo();
-
         // 设置Tab
         setTab();
     }
 
     /* 设置中间信息栏的信息 */
     private void setBriefInfo() {
-        TextView incomeTextView = (TextView) findViewById(R.id.income);
-        TextView outgoingTextView = (TextView) findViewById(R.id.outgoing);
+        TextView incomeTextView = findViewById(R.id.income);
+        TextView outgoingTextView = findViewById(R.id.outgoing);
         NumberFormat numberFormat = NumberFormat.getNumberInstance();
         //设置点击回调函数
         monthTextView.setClickable(true);
@@ -100,8 +99,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void setTab() {
-        ViewPager viewPager = (ViewPager) findViewById(R.id.main_view_pager);
-        TabLayout tabLayout = (TabLayout) findViewById(R.id.main_tab);
+        ViewPager viewPager = findViewById(R.id.main_view_pager);
+        TabLayout tabLayout = findViewById(R.id.main_tab);
 
         viewPager.setAdapter(new FragmentPagerAdapter(getSupportFragmentManager()) {
             @Override

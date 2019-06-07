@@ -6,11 +6,10 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.util.Log;
 import com.demo.awesomeledger.bean.Item;
 import com.demo.awesomeledger.helper.ItemHelper;
-import com.demo.awesomeledger.util.ItemKind;
-import com.demo.awesomeledger.util.ItemType;
+import com.demo.awesomeledger.type.ItemKind;
+import com.demo.awesomeledger.type.ItemType;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -91,11 +90,11 @@ public class ItemDao extends BaseDao<Item> {
                 groupBy, having, orderBy, null);
         List<Item> queryResults = null;
         if (cursor.moveToFirst()) {
-            queryResults = new ArrayList<>(cursor.getCount());
-            while (cursor.moveToNext()) {
+            queryResults =  new ArrayList<>(cursor.getCount());
+            do {
                 Item item = createItemFromCursor(cursor);
                 queryResults.add(item);
-            }
+            } while (cursor.moveToNext());
         }
         cursor.close();
         db.close();

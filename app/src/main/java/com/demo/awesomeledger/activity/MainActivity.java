@@ -58,7 +58,7 @@ public class MainActivity extends AppCompatActivity {
         setTab();
     }
 
-    /* 设置中间信息栏的信息 */
+    // 设置中间信息栏的信息
     private void setBriefInfo() {
         TextView incomeTextView = findViewById(R.id.income);
         TextView outgoingTextView = findViewById(R.id.outgoing);
@@ -147,7 +147,7 @@ public class MainActivity extends AppCompatActivity {
                 }, year, month, day);
         dialog.show();
         //只显示年月，隐藏掉日
-        DatePicker dp = findDatePicker((ViewGroup) dialog.getWindow().getDecorView());
+        DatePicker dp = findDatePicker((ViewGroup)dialog.getWindow().getDecorView());
         if (dp != null) {
             ((ViewGroup) ((ViewGroup) dp.getChildAt(0)).getChildAt(0))
                     .getChildAt(2).setVisibility(View.GONE);

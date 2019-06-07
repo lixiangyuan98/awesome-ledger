@@ -1,4 +1,4 @@
-package com.demo.awesomeledger.util;
+package com.demo.awesomeledger.type;
 
 /* 账单消费类型 */
 public enum ItemKind {

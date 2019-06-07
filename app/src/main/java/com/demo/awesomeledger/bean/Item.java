@@ -1,7 +1,7 @@
 package com.demo.awesomeledger.bean;
 
-import com.demo.awesomeledger.util.ItemKind;
-import com.demo.awesomeledger.util.ItemType;
+import com.demo.awesomeledger.type.ItemKind;
+import com.demo.awesomeledger.type.ItemType;
 
 import java.util.Date;
 

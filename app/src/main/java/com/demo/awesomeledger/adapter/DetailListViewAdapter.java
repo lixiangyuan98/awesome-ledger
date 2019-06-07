@@ -8,6 +8,7 @@ import android.widget.BaseAdapter;
 import android.widget.TextView;
 import com.demo.awesomeledger.R;
 import com.demo.awesomeledger.bean.Item;
+import com.demo.awesomeledger.type.ItemType;
 
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
@@ -27,7 +28,6 @@ public class DetailListViewAdapter extends BaseAdapter {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         ViewHolder holder;
-        String Symbol;
         //如果缓存convertView为空，则需要创建View
         if (convertView == null) {
             holder = new ViewHolder();
@@ -46,19 +46,21 @@ public class DetailListViewAdapter extends BaseAdapter {
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy年MM月dd日", Locale.CHINA);
         holder.timeView.setText(dateFormat.format(itemList.get(position).getDate()));
         holder.typeView.setText(itemList.get(position).getItemType().getType());
-        if(itemList.get(position).getItemType().getType() == "支出"){
-            Symbol = "-";
-        }else{
-            Symbol = "+";
-        }
         holder.kindView.setText(itemList.get(position).getItemKind().getKind());
-        NumberFormat nf = NumberFormat.getInstance();
+        NumberFormat numberFormat = NumberFormat.getInstance();
         //设置保留多少位小数
-        nf.setMaximumFractionDigits(2);
+        numberFormat.setMaximumFractionDigits(2);
         // 取消科学计数法
-        nf.setGroupingUsed(false);
-        holder.amountView.setText(Symbol+nf.format(itemList.get(position).getMoney())+"元");
-
+        numberFormat.setGroupingUsed(false);
+        if(itemList.get(position).getItemType() == ItemType.OUTGOING){
+            holder.amountView.setText(String.format("%s%s", context.getResources().getString(R.string.outgoing),
+                    numberFormat.format(itemList.get(position).getMoney())));
+            holder.amountView.setTextColor(context.getResources().getColor(R.color.colorOutgoing, null));
+        } else {
+            holder.amountView.setText(String.format("%s%s", context.getResources().getString(R.string.income),
+                    numberFormat.format(itemList.get(position).getMoney())));
+            holder.amountView.setTextColor(context.getResources().getColor(R.color.colorIncome, null));
+        }
         return convertView;
     }
 
@@ -76,7 +78,6 @@ public class DetailListViewAdapter extends BaseAdapter {
     public int getCount() {
         return itemList.size();
     }
-
 }
 
 class ViewHolder {

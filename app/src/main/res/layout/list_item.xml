@@ -6,23 +6,27 @@
         android:padding="10dp" android:id="@+id/root">
     <TextView
             android:text="TextView"
-            android:layout_width="wrap_content"
+            android:layout_width="90dp"
             android:gravity="center"
-            android:layout_height="wrap_content" android:id="@+id/item_time" android:layout_weight="1"/>
+            android:textSize="18sp"
+            android:layout_height="30dp" android:id="@+id/item_time" android:layout_weight="1"/>
     <TextView
             android:text="TextView"
-            android:layout_width="wrap_content"
+            android:layout_width="30dp"
             android:gravity="center"
-            android:layout_height="wrap_content" android:id="@+id/item_type" android:layout_weight="1"/>
+            android:textSize="18sp"
+            android:layout_height="30dp" android:id="@+id/item_type" android:layout_weight="1"/>
     <TextView
             android:text="TextView"
-            android:layout_width="wrap_content"
             android:gravity="center"
-            android:layout_height="wrap_content" android:id="@+id/item_kind" android:layout_weight="1"/>
+            android:textSize="18sp"
+            android:layout_height="30dp" android:id="@+id/item_kind" android:layout_weight="1"
+            android:layout_width="20dp"/>
     <TextView
             android:text="TextView"
-            android:layout_width="wrap_content"
+            android:layout_width="50dp"
             android:gravity="center"
-            android:layout_height="wrap_content" android:id="@+id/item_amont" android:layout_weight="1"/>
+            android:textSize="16sp"
+            android:layout_height="30dp" android:id="@+id/item_amont" android:layout_weight="1"/>
 
 </LinearLayout>

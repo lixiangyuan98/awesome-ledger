@@ -1,6 +1,7 @@
 package com.demo.awesomeledger.activity;
 
 import android.app.AlertDialog;
+import android.app.DatePickerDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -8,10 +9,14 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
+import android.text.SpannableString;
+import android.text.Spanned;
 import android.text.TextWatcher;
+import android.text.style.RelativeSizeSpan;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.*;
 import com.amap.api.location.AMapLocation;
 import com.amap.api.location.AMapLocationClient;
@@ -24,11 +29,9 @@ import com.demo.awesomeledger.dao.ItemDao;
 import com.demo.awesomeledger.util.ItemKind;
 import com.demo.awesomeledger.util.ItemType;
 
+import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.List;
-import java.util.Locale;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -38,10 +41,9 @@ public class AddItemActivity extends AppCompatActivity implements View.OnClickLi
     private TextView locationView;
     private EditText noteView;
     private EditText editText;
-    private int selectionStart;
-    private int selectionEnd;
     private ItemDao itemDao;
     private Item item;
+    public int year, month, day;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -79,12 +81,15 @@ public class AddItemActivity extends AppCompatActivity implements View.OnClickLi
         Spinner spinnerType = findViewById(R.id.type);
 
         List<String> typeList = new ArrayList<>();
-        typeList.add(ItemType.OUTGOING.getType());
         typeList.add(ItemType.INCOME.getType());
+        typeList.add(ItemType.OUTGOING.getType());
         ArrayAdapter<String> typeAdapter = new ArrayAdapter<>(AddItemActivity.this,
                 android.R.layout.simple_spinner_item, typeList);
         typeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinnerType.setAdapter(typeAdapter);
+        if(!getIntent().getBooleanExtra("isNew", true)){
+            spinnerType.setSelection(item.getItemType().ordinal());
+        }
         //绑定事件监听
         spinnerType.setOnItemSelectedListener(new Spinner.OnItemSelectedListener() {
 
@@ -118,6 +123,9 @@ public class AddItemActivity extends AppCompatActivity implements View.OnClickLi
                 android.R.layout.simple_spinner_item, kindList);
         kindAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinnerKind.setAdapter(kindAdapter);
+        if(!getIntent().getBooleanExtra("isNew", true)){
+            spinnerKind.setSelection(item.getItemKind().ordinal());
+        }
         spinnerKind.setOnItemSelectedListener(new Spinner.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -137,35 +145,70 @@ public class AddItemActivity extends AppCompatActivity implements View.OnClickLi
 
         //总额输入部分
         editText = findViewById(R.id.editText);
-        editText.setText("0");
-        editText.setSelection(1);
+        if(!getIntent().getBooleanExtra("isNew", true)){
+            NumberFormat nf = NumberFormat.getInstance();
+            //设置保留多少位小数
+            nf.setMaximumFractionDigits(2);
+            // 取消科学计数法
+            nf.setGroupingUsed(false);
+            editText.setText(nf.format(item.getMoney()));
+        }
         //设置监听器
         editText.addTextChangedListener(new TextWatcher() {
+            //    Tips:
+            //    1. onTextChanged和beforTextChanged传入的参数s其实是当前EditText的文字内容，而不是当前输入的内容
+            //    2. 如果在任意一个方法中调用了设置当前EditText文本的方法，setText()，实际都触发了一遍这3个函数，
+            //       所以要有判断条件，在if体内去setText，而且就需要手动设置光标的位置，不然每次光标都会到最开始的位置
+            //    3. onTextChanged中，before=0： 增加；before=1： 点击删除按键
+
+            private int count_decimal_points_ = 0;  // 标识当前是不是已经有小数点了
+            private int selection_start_;  			// 监听光标的位置
+            private StringBuffer str_buf_;			// 缓存当前的string，用以修改内容
             @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
+            public void onTextChanged(CharSequence s, int start, int before,
+                                      int count) {
+                str_buf_ = new StringBuffer(s.toString().trim());
+                // 先判断输入的第一位不能是小数点
+                if (before == 0 && s.length() == 1 && s.charAt(start) == '.') {
+                    editText.setText("");
+                } else if (before == 0 && count_decimal_points_ == 1) {
+                    // 在判断如果当前是增加，并且已经有小数点了，就要判断输入是否合法；如果是减少不做任何判断
+                    // 注意在if语句中都是在else体内调用了设置光标监听位的方法，因为在调用setText之后会出现嵌套的情况
+                    // 非合法的输入包括： 1. 输入的依旧是小数点，2.小数点后位数已经达到两位了
+                    if (s.charAt(start) == '.' ||  (start - str_buf_.indexOf(".") > 2) ) {
+                        str_buf_.deleteCharAt(start);
+                        editText.setText(str_buf_);
+                    } else {
+                        selection_start_ = str_buf_.length();		// 设置光标的位置为结尾
+                    }
+                } else {
+                    selection_start_ = str_buf_.length();		// 设置光标的位置为结尾
+                }
             }
-
             @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-
+            public void beforeTextChanged(CharSequence s, int start, int count,
+                                          int after) {
+                if (s.toString().contains(".")) {
+                    count_decimal_points_ = 1;
+                } else {
+                    count_decimal_points_ = 0;	// 因为可能存在如果是删除的话，把小数点删除的情况
+                }
             }
-
             @Override
             public void afterTextChanged(Editable s) {
-                // fixme: 删除原始0导致崩溃
-                selectionStart = editText.getSelectionStart();
-                selectionEnd = editText.getSelectionEnd();
-                if (!editText.getText().toString().equals("")) {
-                    if (!isOnlyPointNumber(editText.getText().toString())) {
-                        s.delete(selectionStart - 1, selectionEnd);
-                        editText.setText(s);
+                // 重置光标位置
+                if (s != null) {
+                    try {
                         editText.setSelection(s.length());
+                        if(s.toString() != null){
+                            item.setMoney(Double.parseDouble(s.toString()));
+                        }
+                    } catch (NumberFormatException e) {
+                        e.printStackTrace();
                     }
                 }
-                // 设置金额
-                item.setMoney(Double.parseDouble(editText.getText().toString()));
             }
+
         });
     }
 
@@ -181,42 +224,27 @@ public class AddItemActivity extends AppCompatActivity implements View.OnClickLi
      */
     private void initDateTime() {
         Calendar calendar = Calendar.getInstance();
-        SimpleDateFormat dateFormat = new SimpleDateFormat("MM月dd日", Locale.CHINA);
-        tvDate.setText(dateFormat.format(calendar.getTime()));
+        if(!getIntent().getBooleanExtra("isNew", true)){
+            SimpleDateFormat dateFormat = new SimpleDateFormat("MM月dd日", Locale.CHINA);
+            calendar.setTime(item.getDate());
+            year = calendar.get(Calendar.YEAR);
+            month = calendar.get(Calendar.MONTH);
+            day = calendar.get(Calendar.DATE);
+            tvDate.setText(dateFormat.format(item.getDate()));
+        }else {
+            SimpleDateFormat dateFormat = new SimpleDateFormat("MM月dd日", Locale.CHINA);
+            year = calendar.get(Calendar.YEAR);
+            month = calendar.get(Calendar.MONTH);
+            day = calendar.get(Calendar.DATE);
+            tvDate.setText(dateFormat.format(calendar.getTime()));
+        }
+
     }
 
     @Override
     public void onClick(View v) {
-        if (v.getId() == R.id.dateView) {
-            AlertDialog.Builder builder = new AlertDialog.Builder(AddItemActivity.this);
-            builder.setPositiveButton("设置", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    Calendar calendar = Calendar.getInstance();
-                    SimpleDateFormat dateFormat = new SimpleDateFormat("MM月dd日", Locale.CHINA);
-                    tvDate.setText(dateFormat.format(calendar.getTime()));
-                    item.setDate(calendar.getTime());
-                    dialog.dismiss();
-                }
-            });
-            builder.setNegativeButton("取消", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    dialog.dismiss();
-                }
-            });
-            final AlertDialog dialog = builder.create();
-            View dialogView = View.inflate(AddItemActivity.this, R.layout.dialog_date, null);
-            final DatePicker datePicker = dialogView.findViewById(R.id.datePicker);
-
-            dialog.setTitle("设置日期");
-            dialog.setView(dialogView);
-            dialog.show();
-            //初始化日期监听事件
-            Calendar calendar = Calendar.getInstance();
-            calendar.setTime(item.getDate());
-            datePicker.init(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH),
-                    calendar.get(Calendar.DATE), this);
+        if (v.getId() == R.id.dateView){
+            changeMonth();
         }
     }
 
@@ -264,48 +292,88 @@ public class AddItemActivity extends AppCompatActivity implements View.OnClickLi
 
     private void initPosition() {
         locationView = findViewById(R.id.location);
-        //声明AMapLocationClient类对象
-        AMapLocationClient mLocationClient;
-        //声明定位回调监听器
-        //可在其中解析amapLocation获取相应内容。
-        //地址，如果option中设置isNeedAddress为false，则没有此结果，网络定位结果中会有地址信息，GPS定位不返回地址信息。
-        //定位失败时，可通过ErrCode（错误码）信息来确定失败的原因，errInfo是错误信息，详见错误码表。
-        //声明定位回调监听器
-        AMapLocationListener mLocationListener = new AMapLocationListener() {
-            @Override
-            public void onLocationChanged(AMapLocation amapLocation) {
-                if (amapLocation != null) {
-                    if (amapLocation.getErrorCode() == 0) {
-                        //可在其中解析amapLocation获取相应内容。
-                        //地址，如果option中设置isNeedAddress为false，则没有此结果，网络定位结果中会有地址信息，GPS定位不返回地址信息。
-                        String address = amapLocation.getAddress();
-                        locationView.setText(address);
-                        item.setAddress(address);
-                    } else {
-                        Log.e("location", amapLocation.getErrorInfo());
-                        item.setAddress("");
-                        //定位失败时，可通过ErrCode（错误码）信息来确定失败的原因，errInfo是错误信息，详见错误码表。
+        if(!getIntent().getBooleanExtra("isNew", true)){
+            locationView.setText(item.getAddress());
+        }
+        else {
+            //声明AMapLocationClient类对象
+            AMapLocationClient mLocationClient;
+            //声明定位回调监听器
+            //可在其中解析amapLocation获取相应内容。
+            //地址，如果option中设置isNeedAddress为false，则没有此结果，网络定位结果中会有地址信息，GPS定位不返回地址信息。
+            //定位失败时，可通过ErrCode（错误码）信息来确定失败的原因，errInfo是错误信息，详见错误码表。
+            //声明定位回调监听器
+            AMapLocationListener mLocationListener = new AMapLocationListener() {
+                @Override
+                public void onLocationChanged(AMapLocation amapLocation) {
+                    if (amapLocation != null) {
+                        if (amapLocation.getErrorCode() == 0) {
+                            //可在其中解析amapLocation获取相应内容。
+                            //地址，如果option中设置isNeedAddress为false，则没有此结果，网络定位结果中会有地址信息，GPS定位不返回地址信息。
+                            String address = amapLocation.getAddress();
+                            locationView.setText(address);
+                            item.setAddress(address);
+                        } else {
+                            Log.e("location", amapLocation.getErrorInfo());
+                            item.setAddress("");
+                            //定位失败时，可通过ErrCode（错误码）信息来确定失败的原因，errInfo是错误信息，详见错误码表。
+                        }
                     }
                 }
-            }
-        };
-        //初始化定位
-        mLocationClient = new AMapLocationClient(getApplicationContext());
-        //设置定位回调监听
-        mLocationClient.setLocationListener(mLocationListener);
-        //初始化AMapLocationClientOption对象
-        AMapLocationClientOption mLocationOption = new AMapLocationClientOption();
-        //设置定位模式为AMapLocationMode.Hight_Accuracy，高精度模式。
-        mLocationOption.setLocationMode(AMapLocationMode.Hight_Accuracy);
-        //获取一次定位结果：
-        //该方法默认为false。
-        mLocationOption.setOnceLocation(true);
+            };
+            //初始化定位
+            mLocationClient = new AMapLocationClient(getApplicationContext());
+            //设置定位回调监听
+            mLocationClient.setLocationListener(mLocationListener);
+            //初始化AMapLocationClientOption对象
+            AMapLocationClientOption mLocationOption = new AMapLocationClientOption();
+            //设置定位模式为AMapLocationMode.Hight_Accuracy，高精度模式。
+            mLocationOption.setLocationMode(AMapLocationMode.Hight_Accuracy);
+            //获取一次定位结果：
+            //该方法默认为false。
+            mLocationOption.setOnceLocation(true);
 
-        //获取最近3s内精度最高的一次定位结果：
-        //设置setOnceLocationLatest(boolean b)接口为true，启动定位时SDK会返回最近3s内精度最高的一次定位结果。如果设置其为true，setOnceLocation(boolean b)接口也会被设置为true，反之不会，默认为false。
-        mLocationOption.setOnceLocationLatest(true);
-        mLocationClient.setLocationOption(mLocationOption);
-        //启动定位
-        mLocationClient.startLocation();
+            //获取最近3s内精度最高的一次定位结果：
+            //设置setOnceLocationLatest(boolean b)接口为true，启动定位时SDK会返回最近3s内精度最高的一次定位结果。如果设置其为true，setOnceLocation(boolean b)接口也会被设置为true，反之不会，默认为false。
+            mLocationOption.setOnceLocationLatest(true);
+            mLocationClient.setLocationOption(mLocationOption);
+            //启动定位
+            mLocationClient.startLocation();
+        }
+    }
+    private void changeMonth() {
+        DatePickerDialog dialog = new DatePickerDialog(this,AlertDialog.THEME_HOLO_LIGHT,
+                new DatePickerDialog.OnDateSetListener() {
+                    @Override
+                    public void onDateSet(DatePicker view, int selectedYear, int selectedMonth, int selectedDayOfMonth) {
+                        //修改textView
+                        year = selectedYear;
+                        month = selectedMonth;
+                        day = selectedDayOfMonth;
+                        Calendar calendar = Calendar.getInstance();
+                        calendar.set(selectedYear, selectedMonth, selectedDayOfMonth);
+                        SimpleDateFormat dateFormat = new SimpleDateFormat("MM月dd日", Locale.CHINA);
+                        tvDate.setText(dateFormat.format(calendar.getTime()));
+                        item.setDate(calendar.getTime());
+                    }
+                }, year, month, day);
+        dialog.show();
+        DatePicker dp = findDatePicker((ViewGroup) dialog.getWindow().getDecorView());
+    }
+
+    private DatePicker findDatePicker(ViewGroup group) {
+        if (group != null) {
+            for (int i = 0, j = group.getChildCount(); i < j; i++) {
+                View child = group.getChildAt(i);
+                if (child instanceof DatePicker) {
+                    return (DatePicker) child;
+                } else if (child instanceof ViewGroup) {
+                    DatePicker result = findDatePicker((ViewGroup) child);
+                    if (result != null)
+                        return result;
+                }
+            }
+        }
+        return null;
     }
 }

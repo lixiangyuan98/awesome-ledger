@@ -9,6 +9,7 @@ import android.widget.TextView;
 import com.demo.awesomeledger.R;
 import com.demo.awesomeledger.bean.Item;
 
+import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Locale;
@@ -26,6 +27,7 @@ public class DetailListViewAdapter extends BaseAdapter {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         ViewHolder holder;
+        String Symbol;
         //如果缓存convertView为空，则需要创建View
         if (convertView == null) {
             holder = new ViewHolder();
@@ -44,8 +46,18 @@ public class DetailListViewAdapter extends BaseAdapter {
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy年MM月dd日", Locale.CHINA);
         holder.timeView.setText(dateFormat.format(itemList.get(position).getDate()));
         holder.typeView.setText(itemList.get(position).getItemType().getType());
+        if(itemList.get(position).getItemType().getType() == "支出"){
+            Symbol = "-";
+        }else{
+            Symbol = "+";
+        }
         holder.kindView.setText(itemList.get(position).getItemKind().getKind());
-        holder.amountView.setText(String.valueOf(itemList.get(position).getMoney()));
+        NumberFormat nf = NumberFormat.getInstance();
+        //设置保留多少位小数
+        nf.setMaximumFractionDigits(2);
+        // 取消科学计数法
+        nf.setGroupingUsed(false);
+        holder.amountView.setText(Symbol+nf.format(itemList.get(position).getMoney())+"元");
 
         return convertView;
     }

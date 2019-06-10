@@ -21,6 +21,7 @@ import android.widget.TextView;
 import com.demo.awesomeledger.R;
 import com.demo.awesomeledger.fragment.DetailFragment;
 import com.demo.awesomeledger.fragment.OverviewFragment;
+import com.demo.awesomeledger.fragment.IncomeFragment;
 
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
@@ -107,22 +108,26 @@ public class MainActivity extends AppCompatActivity {
             public Fragment getItem(int position) {
                 if (position == 0) {
                     return new DetailFragment();
-                } else {
+                } else if (position == 1){
                     return new OverviewFragment();
+                }else {
+                    return new IncomeFragment();
                 }
             }
 
             @Override
             public int getCount() {
-                return 2;
+                return 3;
             }
 
             @Override
             public CharSequence getPageTitle(int position) {
                 if (position == 0) {
                     return "明细";
-                } else {
-                    return "报表";
+                } else if (position == 1) {
+                    return "支出";
+                }else {
+                    return "收入";
                 }
             }
         });

@@ -82,9 +82,8 @@ public class AddItemActivity extends AppCompatActivity implements View.OnClickLi
         editText = findViewById(R.id.editText);
         Spinner spinnerType = findViewById(R.id.type);
         List<String> typeList = new ArrayList<>();
-        typeList.add(ItemType.INCOME.getType());
         typeList.add(ItemType.OUTGOING.getType());
-
+        typeList.add(ItemType.INCOME.getType());
         ArrayAdapter<String> typeAdapter = new ArrayAdapter<>(AddItemActivity.this,
                 android.R.layout.simple_spinner_item, typeList);
         typeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -97,10 +96,10 @@ public class AddItemActivity extends AppCompatActivity implements View.OnClickLi
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 switch (position) {
                     case 0:
-                        item.setItemType(ItemType.INCOME);
+                        item.setItemType(ItemType.OUTGOING);
                         break;
                     case 1:
-                        item.setItemType(ItemType.OUTGOING);
+                        item.setItemType(ItemType.INCOME);
                         break;
                     default:
                         break;

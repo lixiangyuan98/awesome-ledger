@@ -2,9 +2,8 @@ package com.demo.awesomeledger.type;
 
 /* 账单类型 */
 public enum ItemType {
-    INCOME("收入"),
-    OUTGOING("支出");
-
+    OUTGOING("支出"),
+    INCOME("收入");
     private String type;
 
     private ItemType(String type) {

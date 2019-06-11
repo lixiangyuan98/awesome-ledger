@@ -16,6 +16,8 @@ import com.demo.awesomeledger.bean.Item;
 import com.demo.awesomeledger.dao.ItemDao;
 
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 public class DetailFragment extends Fragment implements AdapterView.OnItemClickListener,
@@ -24,6 +26,7 @@ public class DetailFragment extends Fragment implements AdapterView.OnItemClickL
     private int position;
     private ListView listView;
     private List<Item> itemList;
+    private OnDeleteListener onDeleteListener;
 
     @Nullable
     @Override
@@ -43,15 +46,13 @@ public class DetailFragment extends Fragment implements AdapterView.OnItemClickL
     public void onResume() {
         super.onResume();
         //获取数据
-        itemList = ItemDao.getInstance(getContext()).getAll();
+        Calendar month = Calendar.getInstance();
+        Bundle bundle = getArguments();
+        month.setTime(new Date(bundle.getLong("month")));
+        itemList = ItemDao.getInstance(getContext()).getAllItemsOfMonth(month);
 //        for (Item item: itemList) {
 //            ItemDao.getInstance(getContext()).delete(item);
 //        }
-        if (itemList != null) {
-            for (Item item : itemList) {
-                Log.i("Item", item.getItemType().getType() + " " + item.getMoney().toString());
-            }
-        }
         if(itemList == null){
             itemList = new ArrayList<>();
         }
@@ -89,7 +90,16 @@ public class DetailFragment extends Fragment implements AdapterView.OnItemClickL
             itemList.remove(position);
             DetailListViewAdapter adapter = new DetailListViewAdapter(itemList, getContext());
             listView.setAdapter(adapter);
+            onDeleteListener.onDelete();
         }
         return false;
+    }
+
+    public void setOnDeleteListener(OnDeleteListener onDeleteListener) {
+        this.onDeleteListener = onDeleteListener;
+    }
+
+    public interface OnDeleteListener {
+        void onDelete();
     }
 }

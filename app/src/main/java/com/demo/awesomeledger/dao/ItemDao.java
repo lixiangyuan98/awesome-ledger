@@ -12,6 +12,7 @@ import com.demo.awesomeledger.type.ItemKind;
 import com.demo.awesomeledger.type.ItemType;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -57,7 +58,6 @@ public class ItemDao extends BaseDao<Item> {
                 cursor.getString(6));
     }
 
-    @Override
     @Nullable
     public Item get(long id) {
         SQLiteDatabase db = itemHelper.getReadableDatabase();
@@ -76,9 +76,40 @@ public class ItemDao extends BaseDao<Item> {
         return item;
     }
 
-    @Override
-    public List<Item> getAll() {
-        return query(true, null, null, null, null, "-date");
+    private String[] getDateArgs(Calendar month) {
+        String[] args = new String[2];
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(month.get(Calendar.YEAR), month.get(Calendar.MONTH), 1, 0, 0, 0);
+        Date startDate = calendar.getTime();
+        calendar.set(month.get(Calendar.YEAR), month.get(Calendar.MONTH),
+                month.getActualMaximum(Calendar.DATE), 23, 59, 59);
+        Date endDate = calendar.getTime();
+        args[0] = String.valueOf(startDate.getTime());
+        args[1] = String.valueOf(endDate.getTime());
+        return args;
+    }
+
+    private String[] getDateArgs(Calendar month, ItemType type) {
+        String[] args = new String[3];
+        String[] res_args = getDateArgs(month);
+        args[0] = res_args[0];
+        args[1] = res_args[1];
+        args[2] = type.name();
+        return args;
+    }
+
+    public List<Item> getAllItemsOfMonth(Calendar month) {
+        return query(true, "date>=? AND date<=?", getDateArgs(month), null, null, "-date");
+    }
+
+    public List<Item> getItemsOfMonth(Calendar month, ItemType type) {
+        return query(true, "date>=? AND date<=? AND type=?", getDateArgs(month, type),
+                null, null, "-date");
+    }
+
+    public List<Item> getItemsOfMonthAndKind(Calendar month, ItemType type, ItemKind kind) {
+        return query(true, "date>=? AND date<=? AND type=? AND kind=\"" + kind.name() + "\"",
+                getDateArgs(month, type), null, null, null);
     }
 
     @Override

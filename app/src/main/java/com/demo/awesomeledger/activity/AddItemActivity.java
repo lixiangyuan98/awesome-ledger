@@ -268,7 +268,6 @@ public class AddItemActivity extends AppCompatActivity implements View.OnClickLi
                     } else {
                         itemDao.update(item);
                     }
-                    System.out.println(item.getItemType().getType() + " " + item.getMoney().toString() + " " + item.getComment());
                 }
                 finish();
             }

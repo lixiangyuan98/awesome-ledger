@@ -7,11 +7,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import com.demo.awesomeledger.type.ItemType;
 
-public class IncomeFragment extends BasePieDiagramFragment {
+public class OutgoingFragment extends BasePieDiagramFragment {
     @Override
     public View onCreateView(LayoutInflater inflater,
                              @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        type = ItemType.INCOME;
+        type = ItemType.OUTGOING;
         return super.onCreateView(inflater, container, savedInstanceState);
     }
 }

@@ -4,10 +4,6 @@ import java.util.List;
 
 public abstract class BaseDao<T> {
 
-    public abstract T get(long id);
-
-    public abstract List<T> getAll();
-
     public abstract List<T> query(boolean distinct, String selection, String[] selectionArgs,
                                   String groupBy, String having, String orderBy);
 

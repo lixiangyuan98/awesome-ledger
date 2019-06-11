@@ -208,13 +208,6 @@ public class AddItemActivity extends AppCompatActivity implements View.OnClickLi
         }
     }
 
-    //保留两位小数正则
-    private static boolean isOnlyPointNumber(String number) {
-        Pattern pattern = Pattern.compile("^\\d+\\.?\\d{0,2}$");
-        Matcher matcher = pattern.matcher(number);
-        return matcher.matches();
-    }
-
     /**
      * 获取当前的日期和时间
      */

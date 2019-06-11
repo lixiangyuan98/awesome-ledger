@@ -14,6 +14,7 @@ import com.demo.awesomeledger.dao.ItemDao;
 import com.demo.awesomeledger.type.ItemKind;
 import com.demo.awesomeledger.type.ItemType;
 import com.github.mikephil.charting.charts.PieChart;
+import com.github.mikephil.charting.components.Description;
 import com.github.mikephil.charting.components.Legend;
 import com.github.mikephil.charting.data.PieData;
 import com.github.mikephil.charting.data.PieDataSet;
@@ -57,6 +58,10 @@ abstract class BasePieDiagramFragment extends Fragment {
         pieChart.setRotationEnabled(false); // 可以手动旋转
         pieChart.setUsePercentValues(true);  //显示成百分比
         pieChart.setCenterText(type.getType());  //饼状图中间的文字
+        Description description = new Description();
+        description.setText("");
+        description.setPosition(0,0);
+        pieChart.setDescription(description);
         //设置数据
         pieChart.setData(getPieData());
         //设置下方比例图信息
@@ -66,6 +71,7 @@ abstract class BasePieDiagramFragment extends Fragment {
         mLegend.setYEntrySpace(7f);
         mLegend.setWordWrapEnabled(true);
         mLegend.setFormSize(22f);
+        mLegend.setYOffset(50);
         pieChart.animateXY(1000, 1000);  //设置动画
         pieChart.invalidate(); // 重新更新显示
     }

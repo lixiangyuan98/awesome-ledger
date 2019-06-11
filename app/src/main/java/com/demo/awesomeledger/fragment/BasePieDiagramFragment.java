@@ -71,7 +71,7 @@ abstract class BasePieDiagramFragment extends Fragment {
         mLegend.setYEntrySpace(7f);
         mLegend.setWordWrapEnabled(true);
         mLegend.setFormSize(22f);
-        mLegend.setYOffset(50);
+        mLegend.setYOffset(20);
         pieChart.animateXY(1000, 1000);  //设置动画
         pieChart.invalidate(); // 重新更新显示
     }

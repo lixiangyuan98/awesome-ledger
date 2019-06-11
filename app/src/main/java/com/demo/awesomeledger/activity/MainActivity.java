@@ -1,5 +1,6 @@
 package com.demo.awesomeledger.activity;
 
+import android.Manifest;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.content.Intent;
@@ -22,6 +23,9 @@ import com.demo.awesomeledger.bean.Item;
 import com.demo.awesomeledger.dao.ItemDao;
 import com.demo.awesomeledger.fragment.DetailFragment;
 import com.demo.awesomeledger.type.ItemType;
+
+import com.vondear.rxtool.RxTool;
+import com.vondear.rxtool.RxPermissionsTool;
 
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
@@ -67,6 +71,8 @@ public class MainActivity extends AppCompatActivity implements DetailFragment.On
                 changeMonth();
             }
         });
+        initLocation();
+        RxTool.init(this);
     }
 
     @Override
@@ -156,4 +162,14 @@ public class MainActivity extends AppCompatActivity implements DetailFragment.On
         setBriefInfo();
         setTab();
     }
+    private void initLocation(){
+        RxPermissionsTool.
+                with(this).
+                addPermission(Manifest.permission.ACCESS_COARSE_LOCATION).
+                addPermission(Manifest.permission.ACCESS_FINE_LOCATION).
+                addPermission(Manifest.permission.LOCATION_HARDWARE).
+                initPermission();
+    }
+
+
 }

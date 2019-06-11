@@ -98,16 +98,16 @@ public class ItemDao extends BaseDao<Item> {
         return args;
     }
 
-    public List<Item> getAllItemsOfMonth(Calendar month) {
+    public List<Item> getItems(Calendar month) {
         return query(true, "date>=? AND date<=?", getDateArgs(month), null, null, "-date");
     }
 
-    public List<Item> getItemsOfMonth(Calendar month, ItemType type) {
+    public List<Item> getItems(Calendar month, ItemType type) {
         return query(true, "date>=? AND date<=? AND type=?", getDateArgs(month, type),
                 null, null, "-date");
     }
 
-    public List<Item> getItemsOfMonthAndKind(Calendar month, ItemType type, ItemKind kind) {
+    public List<Item> getItems(Calendar month, ItemType type, ItemKind kind) {
         return query(true, "date>=? AND date<=? AND type=? AND kind=\"" + kind.name() + "\"",
                 getDateArgs(month, type), null, null, null);
     }

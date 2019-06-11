@@ -89,7 +89,7 @@ public class MainActivity extends AppCompatActivity implements DetailFragment.On
     private void setIncomeOrOutgoing(TextView textView, ItemType type) {
         NumberFormat numberFormat = NumberFormat.getNumberInstance();
         float totalMoney = 0f;
-        List<Item> items = ItemDao.getInstance(this).getItemsOfMonth(calendar, type);
+        List<Item> items = ItemDao.getInstance(this).getItems(calendar, type);
         if (items != null) {
             for (Item item: items) {
                 totalMoney += item.getMoney();
@@ -162,7 +162,8 @@ public class MainActivity extends AppCompatActivity implements DetailFragment.On
         setBriefInfo();
         setTab();
     }
-    private void initLocation(){
+
+    private void initLocation() {
         RxPermissionsTool.
                 with(this).
                 addPermission(Manifest.permission.ACCESS_COARSE_LOCATION).
@@ -170,6 +171,4 @@ public class MainActivity extends AppCompatActivity implements DetailFragment.On
                 addPermission(Manifest.permission.LOCATION_HARDWARE).
                 initPermission();
     }
-
-
 }

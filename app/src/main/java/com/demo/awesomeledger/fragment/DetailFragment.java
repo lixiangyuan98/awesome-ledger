@@ -49,7 +49,7 @@ public class DetailFragment extends Fragment implements AdapterView.OnItemClickL
         Calendar month = Calendar.getInstance();
         Bundle bundle = getArguments();
         month.setTime(new Date(bundle.getLong("month")));
-        itemList = ItemDao.getInstance(getContext()).getAllItemsOfMonth(month);
+        itemList = ItemDao.getInstance(getContext()).getItems(month);
 //        for (Item item: itemList) {
 //            ItemDao.getInstance(getContext()).delete(item);
 //        }

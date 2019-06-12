@@ -2,7 +2,7 @@ package com.demo.awesomeledger.dao;
 
 import java.util.List;
 
-public abstract class BaseDao<T> {
+abstract class BaseDao<T> {
 
     public abstract List<T> query(boolean distinct, String selection, String[] selectionArgs,
                                   String groupBy, String having, String orderBy);

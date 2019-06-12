@@ -30,8 +30,6 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 
 public class AddItemActivity extends AppCompatActivity implements View.OnClickListener, DatePicker.OnDateChangedListener {
@@ -144,7 +142,6 @@ public class AddItemActivity extends AppCompatActivity implements View.OnClickLi
         editText.addTextChangedListener(new TextWatcher() {
 
             private int countDecimalPoints = 0;  // 标识当前是不是已经有小数点了
-            private int selectionStart;            // 监听光标的位置
             private StringBuffer stringBuffer;            // 缓存当前的string，用以修改内容
 
             @Override
@@ -161,11 +158,7 @@ public class AddItemActivity extends AppCompatActivity implements View.OnClickLi
                     if (s.charAt(start) == '.' || (start - stringBuffer.indexOf(".") > 2)) {
                         stringBuffer.deleteCharAt(start);
                         editText.setText(stringBuffer);
-                    } else {
-                        selectionStart = stringBuffer.length();        // 设置光标的位置为结尾
                     }
-                } else {
-                    selectionStart = stringBuffer.length();        // 设置光标的位置为结尾
                 }
             }
 
@@ -208,9 +201,7 @@ public class AddItemActivity extends AppCompatActivity implements View.OnClickLi
         }
     }
 
-    /**
-     * 获取当前的日期和时间
-     */
+    // 获取当前的日期和时间
     private void initDateTime() {
         Calendar calendar = Calendar.getInstance();
         if (!isNew) {

@@ -12,6 +12,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.style.RelativeSizeSpan;
+import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
@@ -27,6 +28,15 @@ import com.demo.awesomeledger.type.ItemType;
 import com.vondear.rxtool.RxTool;
 import com.vondear.rxtool.RxPermissionsTool;
 
+import okhttp3.ResponseBody;
+import okhttp3.Response;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Retrofit;
+import retrofit2.http.GET;
+import retrofit2.http.Headers;
+
+import java.io.IOException;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -73,6 +83,7 @@ public class MainActivity extends AppCompatActivity implements DetailFragment.On
         });
         initLocation();
         RxTool.init(this);
+        requestRetrofit();
     }
 
     @Override
@@ -168,8 +179,31 @@ public class MainActivity extends AppCompatActivity implements DetailFragment.On
                 addPermission(Manifest.permission.ACCESS_COARSE_LOCATION).
                 addPermission(Manifest.permission.ACCESS_FINE_LOCATION).
                 addPermission(Manifest.permission.LOCATION_HARDWARE).
+                addPermission(Manifest.permission.INTERNET).
+                addPermission(Manifest.permission.ACCESS_NETWORK_STATE).
                 initPermission();
     }
-
-
+    private void requestRetrofit(){
+        Retrofit retrofit = new Retrofit.Builder().baseUrl("http://10.0.2.2:8080/").build();
+        PersonalProtocol personalProtocol = retrofit.create(PersonalProtocol.class);
+        Call<ResponseBody> call = personalProtocol.getInfo();
+        call.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, retrofit2.Response<ResponseBody> response) {
+                String s = response.toString();
+                Log.e("网络",s);
+            }
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                //数据请求失败
+                Log.e("网络","失败");
+                t.printStackTrace();
+            }
+        });
+    }
+    public interface PersonalProtocol {
+        @Headers({"Content-Type: application/json","Accept: application/json"})
+        @GET("sync")
+        Call<ResponseBody> getInfo();
+    }
 }

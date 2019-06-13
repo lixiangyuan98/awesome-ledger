@@ -1,6 +1,8 @@
 package com.demo.awesomeledger.fragment;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -9,6 +11,7 @@ import android.util.Log;
 import android.view.*;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import com.demo.awesomeledger.MyListView.MyListView;
 import com.demo.awesomeledger.R;
 import com.demo.awesomeledger.activity.AddItemActivity;
 import com.demo.awesomeledger.adapter.DetailListViewAdapter;
@@ -24,7 +27,7 @@ public class DetailFragment extends Fragment implements AdapterView.OnItemClickL
         AdapterView.OnItemLongClickListener, PopupMenu.OnMenuItemClickListener {
 
     private int position;
-    private ListView listView;
+    private MyListView listView;
     private List<Item> itemList;
     private OnDeleteListener onDeleteListener;
 
@@ -39,6 +42,29 @@ public class DetailFragment extends Fragment implements AdapterView.OnItemClickL
         listView.setOnItemClickListener(this);
         // 长按监听
         listView.setOnItemLongClickListener(this);
+        //刷新监听
+        listView.setonRefreshListener(new MyListView.OnRefreshListener(){
+            @SuppressLint("StaticFieldLeak")
+            @Override
+            public void onRefresh() {
+                new AsyncTask<Void, Void, Void>() {
+                    protected Void doInBackground(Void... params) {
+                        try {
+                            Thread.sleep(5000);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                        Log.e("刷新","成功");
+                        return null;
+                    }
+
+                    @Override
+                    protected void onPostExecute(Void result) {
+                        listView.onRefreshComplete();
+                    }
+                }.execute(null, null, null);
+            }
+        });
         return view;
     }
 

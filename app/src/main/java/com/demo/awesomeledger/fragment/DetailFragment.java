@@ -117,15 +117,14 @@ public class DetailFragment extends Fragment implements AdapterView.OnItemClickL
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         Intent intent = new Intent(getContext(), AddItemActivity.class);
         intent.putExtra("isNew", false);
-        intent.putExtra("id", itemList.get(position).getId());
+        intent.putExtra("id", itemList.get(position-1).getId());
         startActivity(intent);
-        Log.d("单击：", String.valueOf(position));
     }
 
     //长按事件，删除操作
     @Override
     public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-        this.position = position;
+        this.position = position - 1;
         PopupMenu popup = new PopupMenu(getContext(), view);
         MenuInflater inflater = popup.getMenuInflater();
         inflater.inflate(R.menu.delete_manu, popup.getMenu());

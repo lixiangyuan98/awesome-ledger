@@ -323,7 +323,7 @@ public class MyListView extends ListView implements AbsListView.OnScrollListener
     }
 
     public void setAdapter(DetailListViewAdapter adapter) {
-        lvHeaderLastUpdatedTv.setText("最近更新:" + new Date().toLocaleString());
+        //lvHeaderLastUpdatedTv.setText("最近更新:" + new Date().toLocaleString());
         super.setAdapter(adapter);
     }
 }

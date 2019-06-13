@@ -14,9 +14,16 @@ import android.widget.ListView;
 import com.demo.awesomeledger.MyListView.MyListView;
 import com.demo.awesomeledger.R;
 import com.demo.awesomeledger.activity.AddItemActivity;
+import com.demo.awesomeledger.activity.MainActivity;
 import com.demo.awesomeledger.adapter.DetailListViewAdapter;
 import com.demo.awesomeledger.bean.Item;
 import com.demo.awesomeledger.dao.ItemDao;
+import okhttp3.ResponseBody;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Retrofit;
+import retrofit2.http.GET;
+import retrofit2.http.Headers;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -50,24 +57,43 @@ public class DetailFragment extends Fragment implements AdapterView.OnItemClickL
                 new AsyncTask<Void, Void, Void>() {
                     protected Void doInBackground(Void... params) {
                         try {
-                            Thread.sleep(5000);
+                            requestRetrofit();
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
                         Log.e("刷新","成功");
                         return null;
                     }
-
-                    @Override
-                    protected void onPostExecute(Void result) {
-                        listView.onRefreshComplete();
-                    }
                 }.execute(null, null, null);
             }
         });
         return view;
     }
-
+    private void requestRetrofit(){
+        Retrofit retrofit = new Retrofit.Builder().baseUrl("http://10.0.2.2:8080/").build();
+        MainActivity.PersonalProtocol personalProtocol = retrofit.create(MainActivity.PersonalProtocol.class);
+        Call<ResponseBody> call = personalProtocol.getInfo();
+        call.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, retrofit2.Response<ResponseBody> response) {
+                String s = response.toString();
+                Log.e("网络",s);
+                listView.onRefreshComplete();
+            }
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                //数据请求失败
+                Log.e("网络","失败");
+                listView.onRefreshComplete();
+                t.printStackTrace();
+            }
+        });
+    }
+    public interface PersonalProtocol {
+        @Headers({"Content-Type: application/json","Accept: application/json"})
+        @GET("sync")
+        Call<ResponseBody> getInfo();
+    }
     @Override
     public void onResume() {
         super.onResume();

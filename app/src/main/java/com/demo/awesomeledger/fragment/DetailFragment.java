@@ -11,6 +11,7 @@ import android.util.Log;
 import android.view.*;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.Toast;
 import com.demo.awesomeledger.MyListView.MyListView;
 import com.demo.awesomeledger.R;
 import com.demo.awesomeledger.activity.AddItemActivity;
@@ -34,6 +35,7 @@ public class DetailFragment extends Fragment implements AdapterView.OnItemClickL
         AdapterView.OnItemLongClickListener, PopupMenu.OnMenuItemClickListener {
 
     private int position;
+    private boolean REFRESHING = false;
     private MyListView listView;
     private List<Item> itemList;
     private OnDeleteListener onDeleteListener;
@@ -57,8 +59,10 @@ public class DetailFragment extends Fragment implements AdapterView.OnItemClickL
                 new AsyncTask<Void, Void, Void>() {
                     protected Void doInBackground(Void... params) {
                         try {
+                            REFRESHING = true;
                             requestRetrofit();
                         } catch (Exception e) {
+                            REFRESHING = false;
                             e.printStackTrace();
                         }
                         Log.e("刷新","成功");
@@ -76,15 +80,21 @@ public class DetailFragment extends Fragment implements AdapterView.OnItemClickL
         call.enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, retrofit2.Response<ResponseBody> response) {
+                REFRESHING = false;
                 String s = response.toString();
                 Log.e("网络",s);
                 listView.onRefreshComplete();
+                String str = "数据同步完成!";
+                Toast.makeText(getContext(), str, Toast.LENGTH_LONG).show();
             }
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {
+                REFRESHING = false;
                 //数据请求失败
                 Log.e("网络","失败");
                 listView.onRefreshComplete();
+                String str = "数据同步失败，请检查网络设置!";
+                Toast.makeText(getContext(), str, Toast.LENGTH_LONG).show();
                 t.printStackTrace();
             }
         });
@@ -115,22 +125,30 @@ public class DetailFragment extends Fragment implements AdapterView.OnItemClickL
     //单击事件，进入addItem
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        Intent intent = new Intent(getContext(), AddItemActivity.class);
-        intent.putExtra("isNew", false);
-        intent.putExtra("id", itemList.get(position-1).getId());
-        startActivity(intent);
+        if(!REFRESHING) {
+            Intent intent = new Intent(getContext(), AddItemActivity.class);
+            intent.putExtra("isNew", false);
+            intent.putExtra("id", itemList.get(position - 1).getId());
+            startActivity(intent);
+        }else {
+            return;
+        }
     }
 
     //长按事件，删除操作
     @Override
     public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-        this.position = position - 1;
-        PopupMenu popup = new PopupMenu(getContext(), view);
-        MenuInflater inflater = popup.getMenuInflater();
-        inflater.inflate(R.menu.delete_manu, popup.getMenu());
-        popup.setOnMenuItemClickListener(this);
-        popup.show();
-        return true;
+        if(!REFRESHING) {
+            this.position = position - 1;
+            PopupMenu popup = new PopupMenu(getContext(), view);
+            MenuInflater inflater = popup.getMenuInflater();
+            inflater.inflate(R.menu.delete_manu, popup.getMenu());
+            popup.setOnMenuItemClickListener(this);
+            popup.show();
+            return true;
+        }else{
+            return true;
+        }
     }
 
     // 删除条目

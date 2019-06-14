@@ -18,6 +18,7 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.DatePicker;
 import android.widget.TextView;
+import android.widget.Toast;
 import com.demo.awesomeledger.R;
 import com.demo.awesomeledger.adapter.TabFragmentAdapter;
 import com.demo.awesomeledger.bean.Item;
@@ -193,11 +194,15 @@ public class MainActivity extends AppCompatActivity implements DetailFragment.On
             public void onResponse(Call<ResponseBody> call, retrofit2.Response<ResponseBody> response) {
                 String s = response.toString();
                 Log.e("网络",s);
+                String str = "数据同步完成!";
+                Toast.makeText(MainActivity.this, str, Toast.LENGTH_LONG).show();
             }
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {
                 //数据请求失败
                 Log.e("网络","失败");
+                String str = "数据同步失败，请检查网络设置!";
+                Toast.makeText(MainActivity.this, str, Toast.LENGTH_LONG).show();
                 t.printStackTrace();
             }
         });

@@ -25,7 +25,7 @@ import com.demo.awesomeledger.bean.Item;
 import com.demo.awesomeledger.dao.ItemDao;
 import com.demo.awesomeledger.fragment.DetailFragment;
 import com.demo.awesomeledger.type.ItemType;
-
+import com.demo.awesomeledger.sync.sync;
 import com.vondear.rxtool.RxTool;
 import com.vondear.rxtool.RxPermissionsTool;
 
@@ -34,6 +34,7 @@ import okhttp3.Response;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 import retrofit2.http.GET;
 import retrofit2.http.Headers;
 
@@ -84,7 +85,8 @@ public class MainActivity extends AppCompatActivity implements DetailFragment.On
         });
         initLocation();
         RxTool.init(this);
-        requestRetrofit();
+        sync sync = new sync(MainActivity.this);
+        sync.requestSync();
     }
 
     @Override
@@ -185,17 +187,24 @@ public class MainActivity extends AppCompatActivity implements DetailFragment.On
                 addPermission(Manifest.permission.ACCESS_NETWORK_STATE).
                 initPermission();
     }
-    private void requestRetrofit(){
-        Retrofit retrofit = new Retrofit.Builder().baseUrl("http://10.0.2.2:8080/").build();
-        PersonalProtocol personalProtocol = retrofit.create(PersonalProtocol.class);
-        Call<ResponseBody> call = personalProtocol.getInfo();
+    private void requestSync(){
+        Retrofit retrofit = new Retrofit.Builder()
+                                .baseUrl("http://10.128.222.189:8080/")
+                                .addConverterFactory(GsonConverterFactory.create())
+                                .build();
+        Sync sync = retrofit.create(Sync.class);
+        Call<ResponseBody> call = sync.getInfo();
         call.enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, retrofit2.Response<ResponseBody> response) {
-                String s = response.toString();
-                Log.e("网络",s);
-                String str = "数据同步完成!";
-                Toast.makeText(MainActivity.this, str, Toast.LENGTH_LONG).show();
+                if(response.code() == 200){
+                    String str = "数据同步完成!";
+                    Toast.makeText(MainActivity.this, str, Toast.LENGTH_LONG).show();
+                }else {
+                    String str  = response.errorBody().toString();
+                    Log.e("失败",str);
+                    Toast.makeText(MainActivity.this, str, Toast.LENGTH_LONG).show();
+                }
             }
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {
@@ -207,7 +216,7 @@ public class MainActivity extends AppCompatActivity implements DetailFragment.On
             }
         });
     }
-    public interface PersonalProtocol {
+    public interface Sync {
         @Headers({"Content-Type: application/json","Accept: application/json"})
         @GET("sync")
         Call<ResponseBody> getInfo();

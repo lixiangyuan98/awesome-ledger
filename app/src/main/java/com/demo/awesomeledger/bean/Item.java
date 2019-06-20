@@ -4,48 +4,57 @@ import com.demo.awesomeledger.type.ItemKind;
 import com.demo.awesomeledger.type.ItemType;
 
 import java.util.Date;
+import java.util.UUID;
 
 /* 账单条目 */
 public class Item {
 
     private Integer id;
+    private String uuid;
     private Date date;
     private ItemType itemType;
     private ItemKind itemKind;
     private String address;
     private Double money;
     private String comment;
+    private Date createdAt;
+    private Date updatedAt;
+    private Date deletedAt;
 
+    // 新建Item时调用
     public Item() {
+        this.uuid = UUID.randomUUID().toString();
         this.date = new Date();
         this.address = "";
         this.money = 0D;
         this.comment = "";
+        this.createdAt = date;
+        this.updatedAt = date;
+        this.deletedAt = null;
     }
 
-    public Item(Integer id, Date date, ItemType itemType, ItemKind itemKind,
-                String address, Double money, String comment) {
+    // 从数据库读取Item时调用
+    public Item(Integer id, String uuid, Date date, ItemType itemType, ItemKind itemKind, String address,
+                Double money, String comment, Date createdAt, Date updatedAt, Date deletedAt) {
         this.id = id;
+        this.uuid = uuid;
         this.date = date;
         this.itemType = itemType;
         this.itemKind = itemKind;
         this.address = address;
         this.money = money;
         this.comment = comment;
-    }
-
-    public Item(Date date, ItemType itemType, ItemKind itemKind,
-                String address, Double money, String comment) {
-        this.date = date;
-        this.itemType = itemType;
-        this.itemKind = itemKind;
-        this.address = address;
-        this.money = money;
-        this.comment = comment;
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
+        this.deletedAt = deletedAt;
     }
 
     public Integer getId() {
         return id;
+    }
+
+    public String getUuid() {
+        return uuid;
     }
 
     public Date getDate() {
@@ -94,5 +103,25 @@ public class Item {
 
     public void setComment(String comment) {
         this.comment = comment;
+    }
+
+    public Date getCreatedAt() {
+        return createdAt;
+    }
+
+    public Date getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(Date updatedAt) {
+        this.updatedAt = updatedAt;
+    }
+
+    public Date getDeletedAt() {
+        return deletedAt;
+    }
+
+    public void setDeletedAt(Date deletedAt) {
+        this.deletedAt = deletedAt;
     }
 }

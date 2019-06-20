@@ -33,12 +33,16 @@ public class ItemHelper extends SQLiteOpenHelper {
         Log.i("helper", "create table");
         final String sql = "CREATE TABLE IF NOT EXISTS " + name +
                 "(id integer primary key autoincrement," +
+                "uuid varchar(64) not null," +
                 "date datetime not null," +
                 "type varchar(32) not null," +
                 "kind varchar(32) not null," +
                 "address varchar(128) not null," +
                 "money double not null," +
-                "comment varchar(256) not null)";
+                "comment varchar(256) not null," +
+                "created_at datetime not null," +
+                "updated_at datetime not null," +
+                "deleted_at datetime)";
         db.execSQL(sql);
     }
 

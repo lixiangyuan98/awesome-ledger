@@ -170,6 +170,9 @@ public class ItemDao extends BaseDao<Item> {
                     queryResults.add(item);
                 }
             } while (cursor.moveToNext());
+            if (queryResults.isEmpty()) {
+                queryResults = null;
+            }
         }
         cursor.close();
         db.close();

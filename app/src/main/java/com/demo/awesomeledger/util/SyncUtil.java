@@ -10,6 +10,7 @@ import com.demo.awesomeledger.dao.ItemDao;
 import com.demo.awesomeledger.gson.*;
 import com.demo.awesomeledger.gson.Error;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.TypeAdapter;
 import okhttp3.OkHttpClient;
 import okhttp3.ResponseBody;
@@ -64,10 +65,11 @@ public class SyncUtil {
                 .addInterceptor(logging);
 
         Log.w("tan","postBodyRequest");
+        Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd'T'HH:mm:ssXXX").create();
         retrofit = new Retrofit.Builder()
-                .baseUrl("http://10.128.222.189:8080/")
+                .baseUrl("http://192.168.100.136:8080/")
                 .client(httpClient.build())
-                .addConverterFactory(GsonConverterFactory.create())
+                .addConverterFactory(GsonConverterFactory.create(gson))
                 .build();
     }
 
@@ -176,11 +178,11 @@ public class SyncUtil {
         }
     }
 
-    private void localDelete(List<Item> localDelete){
-        for (Item item: localDelete) {
-            Item localItem = itemDao.get(item.getUuid());
+    private void localDelete(List<String> localDelete){
+        for (String uuid: localDelete) {
+            Item localItem = itemDao.get(uuid);
             if (localItem != null) {
-                itemDao.delete(item.getUuid());
+                itemDao.delete(uuid);
             }
         }
     }

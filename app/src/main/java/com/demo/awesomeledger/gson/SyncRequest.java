@@ -2,101 +2,86 @@ package com.demo.awesomeledger.gson;
 
 import com.demo.awesomeledger.bean.Item;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class SyncRequest {
 
-    private List<DataBean> data;
+    private List<Data> data = new ArrayList<>();
 
-    public SyncRequest() {
-        data = new ArrayList<>();
-    }
-
-    public List<DataBean> getData() {
+    private List<Data> getData() {
         return data;
     }
 
-    public void setData(List<DataBean> data) {
+    public void setData(List<Data> data) {
         this.data = data;
     }
 
     public void setData(Item item) {
-        String pattern = "YYYY-MM-dd'T'HH:mm:ssXXX";
-        SimpleDateFormat sdf = new SimpleDateFormat(pattern);
-        String update = sdf.format(item.getUpdatedAt());
-        String Dedate = null;
-        if(item.getDeletedAt() != null) {
-            Dedate = sdf.format(item.getDeletedAt());
-        } else {
-            Dedate = null;
-        }
-        String Crdate = sdf.format(item.getCreatedAt());
-        this.data.add(new DataBean(item.getUuid(), update, Dedate, Crdate));
+        data.add(new Data(item));
     }
 
-    public static class DataBean {
-        /**
-         * uuid : uuid1
-         * updatedAt : 2019-06-01T04:12:01+08:00
-         * deletedAt : 2019-06-01T04:12:01+08:00
-         * createdAt : 2019-06-01T04:12:01+08:00,
-         */
-
+    class Data {
         private String uuid;
-        private String updatedAt;
-        private String deletedAt;
-        private String createdAt;
+        private Date updatedAt;
+        private Date deletedAt;
+        private Date createdAt;
 
-        public DataBean(String uuid, String updatedAt, String deletedAt, String createdAt) {
-            this.uuid = uuid;
-            this.updatedAt = updatedAt;
-            this.deletedAt = deletedAt;
-            this.createdAt = createdAt;
+        Data(Item item) {
+            this.uuid = item.getUuid();
+            this.updatedAt = item.getUpdatedAt();
+            this.deletedAt = item.getDeletedAt();
+            this.createdAt = item.getCreatedAt();
         }
 
-        public String getUuid() {
+        String getUuid() {
             return uuid;
         }
 
-        public void setUuid(String uuid) {
+        void setUuid(String uuid) {
             this.uuid = uuid;
         }
 
-        public String getUpdatedAt() {
+        Date getUpdatedAt() {
             return updatedAt;
         }
 
-        public void setUpdatedAt(String updatedAt) {
+        void setUpdatedAt(Date updatedAt) {
             this.updatedAt = updatedAt;
         }
 
-        public String getDeletedAt() {
+        Date getDeletedAt() {
             return deletedAt;
         }
 
-        public void setDeletedAt(String deletedAt) {
+        void setDeletedAt(Date deletedAt) {
             this.deletedAt = deletedAt;
         }
-        public String getcreatedAt() {
+
+        Date getCreatedAt() {
             return createdAt;
         }
 
-        public void setcreatedAt(String createdAt) {
+        void setCreatedAt(Date createdAt) {
             this.createdAt = createdAt;
         }
     }
+
     @Override
     public String toString() {
-        String str = new String();
-        for(DataBean dataBean : getData()){
-            str = str + " uuid: " + dataBean.getUuid() +
-                        " updatedAt " + dataBean.getUpdatedAt() +
-                        " deletedAt " + dataBean.getDeletedAt() +
-                        " createdAt " + dataBean.getcreatedAt();
+        StringBuilder stringBuilder = new StringBuilder();
+        for(Data dataBean : getData()){
+            stringBuilder
+                    .append(" uuid: ")
+                    .append(dataBean.getUuid())
+                    .append(" updatedAt ")
+                    .append(dataBean.getUpdatedAt())
+                    .append(" deletedAt ")
+                    .append(dataBean.getDeletedAt())
+                    .append(" createdAt ")
+                    .append(dataBean.getCreatedAt());
         }
-
-        return "SyncRequest [" +str +"]";
+        return "SyncRequest [" +stringBuilder.toString() +"]";
     }
 }

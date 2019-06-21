@@ -45,7 +45,7 @@ public class Item {
         this.deletedAt = null;
     }
 
-    // 从数据库读取Item时调用
+    // 从数据库读取Item或构造网络请求时调用
     public Item(Integer id, String uuid, Date date, ItemType itemType, ItemKind itemKind, String address,
                 Double money, String comment, Date createdAt, Date updatedAt, Date deletedAt) {
         this.id = id;

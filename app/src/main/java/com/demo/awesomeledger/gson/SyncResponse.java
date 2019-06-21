@@ -6,17 +6,17 @@ import java.util.List;
 
 public class SyncResponse {
 
-    private List<Item> localDelete;
+    private List<String> localDelete;
     private List<Item> localInsert;
     private List<Item> localUpdate;
     private List<String> remoteInsert;
     private List<String> remoteUpdate;
 
-    public List<Item> getLocalDelete() {
+    public List<String> getLocalDelete() {
         return localDelete;
     }
 
-    public void setLocalDelete(List<Item> localDelete) {
+    public void setLocalDelete(List<String> localDelete) {
         this.localDelete = localDelete;
     }
 

@@ -67,7 +67,7 @@ public class SyncUtil {
         Log.w("tan","postBodyRequest");
         Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd'T'HH:mm:ssXXX").create();
         retrofit = new Retrofit.Builder()
-                .baseUrl("http://192.168.100.136:8080/")
+                .baseUrl("http://10.128.222.189:8080/")
                 .client(httpClient.build())
                 .addConverterFactory(GsonConverterFactory.create(gson))
                 .build();
@@ -147,7 +147,7 @@ public class SyncUtil {
         if (error != null) {
             Log.e("网络请求失败", error.getMessage());
         } else {
-            Log.e("网络请求失败", null);
+            Log.e("网络请求失败", "无回复错误信息，请检查服务器地址！");
         }
     }
 
@@ -168,6 +168,7 @@ public class SyncUtil {
         for (Item item: localUpdate) {
             Item localItem = itemDao.get(item.getUuid());
             if (localItem != null) {
+                localItem.setDate(item.getDate());
                 localItem.setItemType(item.getItemType());
                 localItem.setItemKind(item.getItemKind());
                 localItem.setAddress(item.getAddress());

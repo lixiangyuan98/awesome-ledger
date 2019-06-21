@@ -65,7 +65,7 @@ public class SyncUtil {
 
         Log.w("tan","postBodyRequest");
         retrofit = new Retrofit.Builder()
-                .baseUrl("http://127.0.0.1:8080/")
+                .baseUrl("http://10.128.222.189:8080/")
                 .client(httpClient.build())
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
@@ -157,6 +157,7 @@ public class SyncUtil {
 
     private void localInsert(List<Item> localInsertList){
         for (Item item: localInsertList) {
+            Log.e("item",item.getAddress());
             itemDao.insert(item);
         }
     }

@@ -31,7 +31,7 @@ public class InsertRequest {
             Dedate = null;
         }
         String Crdate = sdf.format(item.getCreatedAt());
-        this.data.add(new DataBean(item.getUuid(), update, Dedate, Crdate, date, item.getMoney(), item.getAddress(), item.getComment(), item.getItemKind().getKind(), item.getItemType().getType()));
+        this.data.add(new DataBean(item.getUuid(), update, Dedate, Crdate, date, item.getMoney(), item.getAddress(), item.getComment(), item.getItemKind().name(), item.getItemType().name()));
     }
 
     public static class DataBean {

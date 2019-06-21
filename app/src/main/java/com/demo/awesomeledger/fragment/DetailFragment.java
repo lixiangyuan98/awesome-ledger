@@ -50,6 +50,7 @@ public class DetailFragment extends Fragment implements AdapterView.OnItemClickL
                     protected Void doInBackground(Void... params) {
                         try {
                             syncUtil.requestSync();
+                            Thread.sleep(1000);
                         } catch (Exception e) {
                             e.printStackTrace();
                         }

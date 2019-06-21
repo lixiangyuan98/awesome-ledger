@@ -147,7 +147,7 @@ public class SyncUtil {
         if (error != null) {
             Log.e("网络请求失败", error.getMessage());
         } else {
-            Log.e("网络请求失败", null);
+            Log.e("网络请求失败", "无回复错误信息，请检查服务器地址！");
         }
     }
 
@@ -168,12 +168,14 @@ public class SyncUtil {
         for (Item item: localUpdate) {
             Item localItem = itemDao.get(item.getUuid());
             if (localItem != null) {
+                localItem.setDate(item.getDate());
                 localItem.setItemType(item.getItemType());
                 localItem.setItemKind(item.getItemKind());
                 localItem.setAddress(item.getAddress());
                 localItem.setMoney(item.getMoney());
                 localItem.setComment(item.getComment());
-                itemDao.update(localItem);
+                localItem.setUpdatedAt(item.getUpdatedAt());
+                itemDao.update(localItem, true);
             }
         }
     }

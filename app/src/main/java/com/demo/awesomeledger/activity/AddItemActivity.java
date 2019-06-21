@@ -250,7 +250,7 @@ public class AddItemActivity extends AppCompatActivity implements View.OnClickLi
                     if (isNew) {
                         itemDao.insert(item);
                     } else {
-                        itemDao.update(item);
+                        itemDao.update(item, false);
                     }
                 }
                 finish();

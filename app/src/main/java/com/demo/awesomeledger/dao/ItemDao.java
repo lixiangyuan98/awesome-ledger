@@ -188,11 +188,13 @@ public class ItemDao extends BaseDao<Item> {
     }
 
     @Override
-    public void update(@NonNull Item item) {
+    public void update(@NonNull Item item, boolean fromRemote) {
         SQLiteDatabase db = itemHelper.getWritableDatabase();
         String[] whereArgs = new String[1];
         whereArgs[0] = String.valueOf(item.getId());
-        item.setUpdatedAt(new Date());
+        if (!fromRemote) {
+            item.setUpdatedAt(new Date());
+        }
         db.update(ItemHelper.name, getContentValues(item), "id=?", whereArgs);
         db.close();
     }
@@ -201,7 +203,7 @@ public class ItemDao extends BaseDao<Item> {
     @Override
     public void delete(@NonNull Item item) {
         item.setDeletedAt(new Date());
-        update(item);
+        update(item, false);
     }
 
     // 彻底删除item

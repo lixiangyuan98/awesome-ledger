@@ -7,7 +7,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Insertbean {
+public class UpdateRequest {
 
     private List<DataBean> data;
 
@@ -15,7 +15,7 @@ public class Insertbean {
         this.data = data;
     }
 
-    public Insertbean(){ data = new ArrayList<>(); }
+    public UpdateRequest(){ data = new ArrayList<>(); }
 
     public List<DataBean> getData() { return data;}
 

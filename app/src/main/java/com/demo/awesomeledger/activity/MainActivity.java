@@ -12,33 +12,21 @@ import android.support.v7.app.AppCompatActivity;
 import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.style.RelativeSizeSpan;
-import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.DatePicker;
 import android.widget.TextView;
-import android.widget.Toast;
 import com.demo.awesomeledger.R;
 import com.demo.awesomeledger.adapter.TabFragmentAdapter;
 import com.demo.awesomeledger.bean.Item;
 import com.demo.awesomeledger.dao.ItemDao;
 import com.demo.awesomeledger.fragment.DetailFragment;
 import com.demo.awesomeledger.type.ItemType;
-import com.demo.awesomeledger.sync.sync;
-import com.vondear.rxtool.RxTool;
+import com.demo.awesomeledger.util.SyncUtil;
 import com.vondear.rxtool.RxPermissionsTool;
+import com.vondear.rxtool.RxTool;
 
-import okhttp3.ResponseBody;
-import okhttp3.Response;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
-import retrofit2.http.GET;
-import retrofit2.http.Headers;
-
-import java.io.IOException;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -46,7 +34,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
-public class MainActivity extends AppCompatActivity implements DetailFragment.OnDeleteListener {
+public class MainActivity extends AppCompatActivity
+        implements DetailFragment.OnDeleteListener, SyncUtil.RefreshListener {
 
     private Integer year, month, day;
     private TextView monthTextView;
@@ -55,7 +44,6 @@ public class MainActivity extends AppCompatActivity implements DetailFragment.On
     private Calendar calendar = Calendar.getInstance();
     private Bundle bundle = new Bundle();
     private final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy年\nMM月▼", Locale.CHINA);
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -85,8 +73,8 @@ public class MainActivity extends AppCompatActivity implements DetailFragment.On
         });
         initLocation();
         RxTool.init(this);
-        sync sync = new sync(MainActivity.this);
-        sync.requestSync();
+        SyncUtil syncUtil = new SyncUtil(MainActivity.this);
+        syncUtil.requestSync();
     }
 
     @Override
@@ -177,48 +165,20 @@ public class MainActivity extends AppCompatActivity implements DetailFragment.On
         setTab();
     }
 
+    @Override
+    public void afterRefresh() {
+        setBriefInfo();
+        setTab();
+    }
+
     private void initLocation() {
-        RxPermissionsTool.
-                with(this).
-                addPermission(Manifest.permission.ACCESS_COARSE_LOCATION).
-                addPermission(Manifest.permission.ACCESS_FINE_LOCATION).
-                addPermission(Manifest.permission.LOCATION_HARDWARE).
-                addPermission(Manifest.permission.INTERNET).
-                addPermission(Manifest.permission.ACCESS_NETWORK_STATE).
-                initPermission();
-    }
-    private void requestSync(){
-        Retrofit retrofit = new Retrofit.Builder()
-                                .baseUrl("http://10.128.222.189:8080/")
-                                .addConverterFactory(GsonConverterFactory.create())
-                                .build();
-        Sync sync = retrofit.create(Sync.class);
-        Call<ResponseBody> call = sync.getInfo();
-        call.enqueue(new Callback<ResponseBody>() {
-            @Override
-            public void onResponse(Call<ResponseBody> call, retrofit2.Response<ResponseBody> response) {
-                if(response.code() == 200){
-                    String str = "数据同步完成!";
-                    Toast.makeText(MainActivity.this, str, Toast.LENGTH_LONG).show();
-                }else {
-                    String str  = response.errorBody().toString();
-                    Log.e("失败",str);
-                    Toast.makeText(MainActivity.this, str, Toast.LENGTH_LONG).show();
-                }
-            }
-            @Override
-            public void onFailure(Call<ResponseBody> call, Throwable t) {
-                //数据请求失败
-                Log.e("网络","失败");
-                String str = "数据同步失败，请检查网络设置!";
-                Toast.makeText(MainActivity.this, str, Toast.LENGTH_LONG).show();
-                t.printStackTrace();
-            }
-        });
-    }
-    public interface Sync {
-        @Headers({"Content-Type: application/json","Accept: application/json"})
-        @GET("sync")
-        Call<ResponseBody> getInfo();
+        RxPermissionsTool
+                .with(this)
+                .addPermission(Manifest.permission.ACCESS_COARSE_LOCATION)
+                .addPermission(Manifest.permission.ACCESS_FINE_LOCATION)
+                .addPermission(Manifest.permission.LOCATION_HARDWARE)
+                .addPermission(Manifest.permission.INTERNET)
+                .addPermission(Manifest.permission.ACCESS_NETWORK_STATE)
+                .initPermission();
     }
 }

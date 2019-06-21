@@ -1,7 +1,9 @@
 package com.demo.awesomeledger.view;
 
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 
 import android.content.Context;
 import android.util.AttributeSet;
@@ -21,7 +23,7 @@ import com.demo.awesomeledger.R;
 
 import com.demo.awesomeledger.adapter.DetailListViewAdapter;
 
-public class MyListView extends ListView implements AbsListView.OnScrollListener {
+public class DetailListView extends ListView implements AbsListView.OnScrollListener {
     private final static int RELEASE_To_REFRESH = 0;// 下拉过程的状态值
     private final static int PULL_To_REFRESH = 1; // 从下拉返回到不刷新的状态值
     private final static int REFRESHING = 2;// 正在刷新的状态值
@@ -30,7 +32,6 @@ public class MyListView extends ListView implements AbsListView.OnScrollListener
 
     // 实际的padding的距离与界面上偏移距离的比例
     private final static int RATIO = 3;
-    private LayoutInflater inflater;
 
     // ListView头部下拉刷新的布局
     private LinearLayout headerView;
@@ -55,19 +56,19 @@ public class MyListView extends ListView implements AbsListView.OnScrollListener
     private OnRefreshListener refreshListener;
 
     private boolean isRefreshable;
-    public MyListView(Context context) {
+    public DetailListView(Context context) {
         super(context);
         init(context);
     }
 
-    public MyListView(Context context, AttributeSet attrs) {
+    public DetailListView(Context context, AttributeSet attrs) {
         super(context, attrs);
         init(context);
     }
 
     private void init(Context context) {
         setCacheColorHint(context.getResources().getColor(android.R.color.transparent));
-        inflater = LayoutInflater.from(context);
+        LayoutInflater inflater = LayoutInflater.from(context);
         headerView = (LinearLayout) inflater.inflate(R.layout.lv_header, null);
         lvHeaderTipsTv = (TextView) headerView
                 .findViewById(R.id.lvHeaderTipsTv);
@@ -122,11 +123,7 @@ public class MyListView extends ListView implements AbsListView.OnScrollListener
     @Override
     public void onScroll(AbsListView view, int firstVisibleItem,
                          int visibleItemCount, int totalItemCount) {
-        if (firstVisibleItem == 0) {
-            isRefreshable = true;
-        } else {
-            isRefreshable = false;
-        }
+        isRefreshable = firstVisibleItem == 0;
     }
 
     @Override
@@ -162,7 +159,7 @@ public class MyListView extends ListView implements AbsListView.OnScrollListener
                         isRecored = true;
                         startY = tempY;
                     }
-                    if (state != REFRESHING && isRecored && state != LOADING) {
+                    if (state != REFRESHING && state != LOADING) {
                         // 保证在设置padding的过程中，当前的位置一直是在head，否则如果当列表超出屏幕的话，当在上推的时候，列表会同时进行滚动
                         // 可以松手去刷新了
                         if (state == RELEASE_To_REFRESH) {
@@ -285,8 +282,7 @@ public class MyListView extends ListView implements AbsListView.OnScrollListener
                     ViewGroup.LayoutParams.FILL_PARENT,
                     ViewGroup.LayoutParams.WRAP_CONTENT);
         }
-        int childWidthSpec = ViewGroup.getChildMeasureSpec(0, 0 + 0,
-                params.width);
+        int childWidthSpec = ViewGroup.getChildMeasureSpec(0, 0, params.width);
         int lpHeight = params.height;
         int childHeightSpec;
         if (lpHeight > 0) {
@@ -305,12 +301,13 @@ public class MyListView extends ListView implements AbsListView.OnScrollListener
     }
 
     public interface OnRefreshListener {
-        public void onRefresh();
+        void onRefresh();
     }
 
     public void onRefreshComplete() {
         state = DONE;
-        lvHeaderLastUpdatedTv.setText("最近更新:" + new Date().toLocaleString());
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.CHINA);
+        lvHeaderLastUpdatedTv.setText("最近更新:" + dateFormat.format(new Date()));
         changeHeaderViewByState();
     }
 
@@ -321,7 +318,8 @@ public class MyListView extends ListView implements AbsListView.OnScrollListener
     }
 
     public void setAdapter(DetailListViewAdapter adapter) {
-        lvHeaderLastUpdatedTv.setText("最近更新:" + new Date().toLocaleString());
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.CHINA);
+        lvHeaderLastUpdatedTv.setText("最近更新:" + dateFormat.format(new Date()));
         super.setAdapter(adapter);
     }
 }

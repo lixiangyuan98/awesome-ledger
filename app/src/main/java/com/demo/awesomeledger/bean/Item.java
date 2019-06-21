@@ -2,6 +2,7 @@ package com.demo.awesomeledger.bean;
 
 import com.demo.awesomeledger.type.ItemKind;
 import com.demo.awesomeledger.type.ItemType;
+import com.google.gson.annotations.SerializedName;
 
 import java.util.Date;
 import java.util.UUID;
@@ -9,16 +10,27 @@ import java.util.UUID;
 /* 账单条目 */
 public class Item {
 
+    @SerializedName("ID")
     private Integer id;
+    @SerializedName("UUID")
     private String uuid;
+    @SerializedName("Date")
     private Date date;
+    @SerializedName("ItemType")
     private ItemType itemType;
+    @SerializedName("ItemKind")
     private ItemKind itemKind;
+    @SerializedName("Address")
     private String address;
+    @SerializedName("Money")
     private Double money;
+    @SerializedName("Comment")
     private String comment;
+    @SerializedName("CreatedAt")
     private Date createdAt;
+    @SerializedName("UpdatedAt")
     private Date updatedAt;
+    @SerializedName("DeletedAt")
     private Date deletedAt;
 
     // 新建Item时调用
@@ -53,8 +65,16 @@ public class Item {
         return id;
     }
 
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
     public String getUuid() {
         return uuid;
+    }
+
+    public void setUuid(String uuid) {
+        this.uuid = uuid;
     }
 
     public Date getDate() {
@@ -107,6 +127,10 @@ public class Item {
 
     public Date getCreatedAt() {
         return createdAt;
+    }
+
+    public void setCreatedAt(Date createdAt) {
+        this.createdAt = createdAt;
     }
 
     public Date getUpdatedAt() {

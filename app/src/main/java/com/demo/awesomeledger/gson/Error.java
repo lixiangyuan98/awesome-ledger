@@ -1,6 +1,6 @@
 package com.demo.awesomeledger.gson;
 
-public class Errorbean {
+public class Error {
     /**
      * message :
      */

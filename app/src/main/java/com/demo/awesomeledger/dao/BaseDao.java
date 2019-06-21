@@ -9,7 +9,7 @@ abstract class BaseDao<T> {
 
     public abstract long insert(T t);
 
-    public abstract void update(T t);
+    public abstract void update(T t, boolean fromRemote);
 
     public abstract void delete(T t);
 }

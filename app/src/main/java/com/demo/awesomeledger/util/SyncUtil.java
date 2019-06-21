@@ -174,7 +174,8 @@ public class SyncUtil {
                 localItem.setAddress(item.getAddress());
                 localItem.setMoney(item.getMoney());
                 localItem.setComment(item.getComment());
-                itemDao.update(localItem);
+                localItem.setUpdatedAt(item.getUpdatedAt());
+                itemDao.update(localItem, true);
             }
         }
     }

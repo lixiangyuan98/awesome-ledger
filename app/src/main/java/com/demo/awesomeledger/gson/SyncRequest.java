@@ -68,20 +68,4 @@ public class SyncRequest {
         }
     }
 
-    @Override
-    public String toString() {
-        StringBuilder stringBuilder = new StringBuilder();
-        for(Data dataBean : getData()){
-            stringBuilder
-                    .append(" uuid: ")
-                    .append(dataBean.getUuid())
-                    .append(" updatedAt ")
-                    .append(dataBean.getUpdatedAt())
-                    .append(" deletedAt ")
-                    .append(dataBean.getDeletedAt())
-                    .append(" createdAt ")
-                    .append(dataBean.getCreatedAt());
-        }
-        return "SyncRequest [" +stringBuilder.toString() +"]";
-    }
 }

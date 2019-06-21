@@ -1,24 +1,15 @@
-package com.demo.awesomeledger.Gson;
+package com.demo.awesomeledger.gson;
 
 import java.util.List;
-import java.util.Date;
 
-public class syncResponse {
+public class SyncResponse {
 
     /**
      * result : {"localDelete":[{"ID":1,"CreatedAt":"","UpdateAt":"","DeletedAt":"","UUID":"","Date":"","ItemType":"","ItemKind":"","Address":"","Money":123,"Comment":""}],"localInsert":[{"ID":1,"CreatedAt":"","UpdateAt":"","DeletedAt":"","UUID":"","Date":"","ItemType":"","ItemKind":"","Address":"","Money":123,"Comment":""}],"localUpdate":[{"ID":1,"CreatedAt":"","UpdateAt":"","DeletedAt":"","UUID":"","Date":"","ItemType":"","ItemKind":"","Address":"","Money":123,"Comment":""}],"remoteInsert":["",""],"remoteUpdate":["",""]}
      */
-    private dataBean data;
 
-    public dataBean getData() {
-        return data;
-    }
 
-    public void setResult(dataBean data) {
-        this.data = data;
-    }
 
-    public static class dataBean {
         private List<LocalDeleteBean> localDelete;
         private List<LocalInsertBean> localInsert;
         private List<LocalUpdateBean> localUpdate;
@@ -81,11 +72,11 @@ public class syncResponse {
              */
 
             private int ID;
-            private Date CreatedAt;
-            private Date UpdateAt;
-            private Date DeletedAt;
+            private String CreatedAt;
+            private String UpdateAt;
+            private String DeletedAt;
             private String UUID;
-            private Date Date;
+            private String Date;
             private String ItemType;
             private String ItemKind;
             private String Address;
@@ -100,27 +91,27 @@ public class syncResponse {
                 this.ID = ID;
             }
 
-            public Date getCreatedAt() {
+            public String getCreatedAt() {
                 return CreatedAt;
             }
 
-            public void setCreatedAt(Date CreatedAt) {
+            public void setCreatedAt(String CreatedAt) {
                 this.CreatedAt = CreatedAt;
             }
 
-            public Date getUpdateAt() {
+            public String getUpdateAt() {
                 return UpdateAt;
             }
 
-            public void setUpdateAt(Date UpdateAt) {
+            public void setUpdateAt(String UpdateAt) {
                 this.UpdateAt = UpdateAt;
             }
 
-            public Date getDeletedAt() {
+            public String getDeletedAt() {
                 return DeletedAt;
             }
 
-            public void setDeletedAt(Date DeletedAt) {
+            public void setDeletedAt(String DeletedAt) {
                 this.DeletedAt = DeletedAt;
             }
 
@@ -132,11 +123,11 @@ public class syncResponse {
                 this.UUID = UUID;
             }
 
-            public Date getDate() {
+            public String getDate() {
                 return Date;
             }
 
-            public void setDate(Date Date) {
+            public void setDate(String Date) {
                 this.Date = Date;
             }
 
@@ -197,11 +188,11 @@ public class syncResponse {
              */
 
             private int ID;
-            private Date CreatedAt;
-            private Date UpdateAt;
-            private Date DeletedAt;
+            private String CreatedAt;
+            private String UpdateAt;
+            private String DeletedAt;
             private String UUID;
-            private Date Date;
+            private String Date;
             private String ItemType;
             private String ItemKind;
             private String Address;
@@ -216,27 +207,27 @@ public class syncResponse {
                 this.ID = ID;
             }
 
-            public Date getCreatedAt() {
+            public String getCreatedAt() {
                 return CreatedAt;
             }
 
-            public void setCreatedAt(Date CreatedAt) {
+            public void setCreatedAt(String CreatedAt) {
                 this.CreatedAt = CreatedAt;
             }
 
-            public Date getUpdateAt() {
+            public String getUpdateAt() {
                 return UpdateAt;
             }
 
-            public void setUpdateAt(Date UpdateAt) {
+            public void setUpdateAt(String UpdateAt) {
                 this.UpdateAt = UpdateAt;
             }
 
-            public Date getDeletedAt() {
+            public String getDeletedAt() {
                 return DeletedAt;
             }
 
-            public void setDeletedAt(Date DeletedAt) {
+            public void setDeletedAt(String DeletedAt) {
                 this.DeletedAt = DeletedAt;
             }
 
@@ -248,11 +239,11 @@ public class syncResponse {
                 this.UUID = UUID;
             }
 
-            public Date getDate() {
+            public String getDate() {
                 return Date;
             }
 
-            public void setDate(Date Date) {
+            public void setDate(String Date) {
                 this.Date = Date;
             }
 
@@ -313,11 +304,11 @@ public class syncResponse {
              */
 
             private int ID;
-            private Date CreatedAt;
-            private Date UpdateAt;
-            private Date DeletedAt;
+            private String CreatedAt;
+            private String UpdateAt;
+            private String DeletedAt;
             private String UUID;
-            private Date Date;
+            private String Date;
             private String ItemType;
             private String ItemKind;
             private String Address;
@@ -332,27 +323,27 @@ public class syncResponse {
                 this.ID = ID;
             }
 
-            public Date getCreatedAt() {
+            public String getCreatedAt() {
                 return CreatedAt;
             }
 
-            public void setCreatedAt(Date CreatedAt) {
+            public void setCreatedAt(String CreatedAt) {
                 this.CreatedAt = CreatedAt;
             }
 
-            public Date getUpdateAt() {
+            public String getUpdateAt() {
                 return UpdateAt;
             }
 
-            public void setUpdateAt(Date UpdateAt) {
+            public void setUpdateAt(String UpdateAt) {
                 this.UpdateAt = UpdateAt;
             }
 
-            public Date getDeletedAt() {
+            public String getDeletedAt() {
                 return DeletedAt;
             }
 
-            public void setDeletedAt(Date DeletedAt) {
+            public void setDeletedAt(String DeletedAt) {
                 this.DeletedAt = DeletedAt;
             }
 
@@ -364,11 +355,11 @@ public class syncResponse {
                 this.UUID = UUID;
             }
 
-            public Date getDate() {
+            public String getDate() {
                 return Date;
             }
 
-            public void setDate(Date Date) {
+            public void setDate(String Date) {
                 this.Date = Date;
             }
 
@@ -412,5 +403,5 @@ public class syncResponse {
                 this.Comment = Comment;
             }
         }
-    }
+
 }

@@ -1,16 +1,37 @@
-package com.demo.awesomeledger.Gson;
+package com.demo.awesomeledger.gson;
 
+import com.demo.awesomeledger.bean.Item;
 import com.google.gson.annotations.SerializedName;
 
-import java.util.Date;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.List;
 
-public class insertbean {
+public class Updatebean {
 
     private List<DataBean> data;
 
     public void setData(List<DataBean> data) {
         this.data = data;
+    }
+
+    public Updatebean(){ data = new ArrayList<>(); }
+
+    public List<DataBean> getData() { return data;}
+
+    public void setData(Item item){
+        String pattern = "YYYY-MM-dd'T'HH:mm:ssXXX";
+        SimpleDateFormat sdf = new SimpleDateFormat(pattern);
+        String update = sdf.format(item.getUpdatedAt());
+        String Dedate = null;
+        String date = sdf.format(item.getDate());
+        if(item.getDeletedAt() != null) {
+            Dedate = sdf.format(item.getDeletedAt());
+        } else {
+            Dedate = null;
+        }
+        String Crdate = sdf.format(item.getCreatedAt());
+        this.data.add(new DataBean(item.getUuid(), update, Dedate, Crdate, date, item.getMoney(), item.getAddress(), item.getComment(), item.getItemKind().getKind(), item.getItemType().getType()));
     }
 
     public static class DataBean {
@@ -30,13 +51,13 @@ public class insertbean {
         @SerializedName("uuid")
         private String uuidX;
         @SerializedName("createdAt")
-        private Date createdAtX;
+        private String createdAtX;
         @SerializedName("updatedAt")
-        private Date updatedAtX;
+        private String updatedAtX;
         @SerializedName("deletedAt")
-        private Date deletedAtX;
+        private String deletedAtX;
         @SerializedName("date")
-        private Date dateX;
+        private String dateX;
         @SerializedName("itemType")
         private String itemTypeX;
         @SerializedName("itemKind")
@@ -48,6 +69,19 @@ public class insertbean {
         @SerializedName("comment")
         private String commentX;
 
+        public DataBean(String uuid, String updatedAt, String deletedAt, String createdAt, String date, double money, String address, String comment, String itemKind, String itemType) {
+            this.uuidX = uuid;
+            this.updatedAtX = updatedAt;
+            this.deletedAtX = deletedAt;
+            this.createdAtX = createdAt;
+            this.dateX = date;
+            this.itemKindX = itemKind;
+            this.itemTypeX = itemType;
+            this.addressX = address;
+            this.moneyX = money;
+            this.commentX = comment;
+        }
+
         public String getUuidX() {
             return uuidX;
         }
@@ -56,35 +90,35 @@ public class insertbean {
             this.uuidX = uuidX;
         }
 
-        public Date getCreatedAtX() {
+        public String getCreatedAtX() {
             return createdAtX;
         }
 
-        public void setCreatedAtX(Date createdAtX) {
+        public void setCreatedAtX(String createdAtX) {
             this.createdAtX = createdAtX;
         }
 
-        public Date getUpdatedAtX() {
+        public String getUpdatedAtX() {
             return updatedAtX;
         }
 
-        public void setUpdatedAtX(Date updatedAtX) {
+        public void setUpdatedAtX(String updatedAtX) {
             this.updatedAtX = updatedAtX;
         }
 
-        public Date getDeletedAtX() {
+        public String getDeletedAtX() {
             return deletedAtX;
         }
 
-        public void setDeletedAtX(Date deletedAtX) {
+        public void setDeletedAtX(String deletedAtX) {
             this.deletedAtX = deletedAtX;
         }
 
-        public Date getDateX() {
+        public String getDateX() {
             return dateX;
         }
 
-        public void setDateX(Date dateX) {
+        public void setDateX(String dateX) {
             this.dateX = dateX;
         }
 

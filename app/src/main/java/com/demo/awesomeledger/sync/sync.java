@@ -3,14 +3,16 @@ package com.demo.awesomeledger.sync;
 import android.util.Log;
 import android.widget.Toast;
 import android.content.Context;
-import com.demo.awesomeledger.activity.MainActivity;
-import com.demo.awesomeledger.fragment.DetailFragment;
+import com.demo.awesomeledger.BuildConfig;
+import com.demo.awesomeledger.bean.Item;
+import com.demo.awesomeledger.dao.ItemDao;
 import com.google.gson.Gson;
 import com.google.gson.TypeAdapter;
 import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.ResponseBody;
+import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Retrofit;
@@ -19,48 +21,50 @@ import retrofit2.http.Body;
 import retrofit2.http.GET;
 import retrofit2.http.Headers;
 import retrofit2.http.POST;
-import com.demo.awesomeledger.Gson.syncRequest;
-import com.demo.awesomeledger.Gson.syncResponse;
-import com.demo.awesomeledger.Gson.insertbean;
-import com.demo.awesomeledger.Gson.updatebean;
-import com.demo.awesomeledger.Gson.errorbean;
+import com.demo.awesomeledger.gson.SyncRequest;
+import com.demo.awesomeledger.gson.SyncResponse;
+import com.demo.awesomeledger.gson.Insertbean;
+import com.demo.awesomeledger.gson.Updatebean;
+import com.demo.awesomeledger.gson.Errorbean;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 public class sync {
 
     public Context context;
-    public syncRequest syncrequest;
-    public syncResponse syncresponse;
-    public insertbean insertbean;
-    public updatebean updatebean;
-    public OkHttpClient client;
-    public Retrofit retrofit;
+    public SyncResponse syncresponse;
+    private Retrofit retrofit;
 
-    public sync(Context con){
-        this.context = con;
+    public sync(Context context){
+        this.context = context;
     }
     //初始化http请求属性
-    public void initHttp(){
-        // 创建OkHttpClient.Builder对象
-        OkHttpClient.Builder builder = new OkHttpClient().newBuilder() ;
-        // 设置拦截器
-        builder.addInterceptor(new Interceptor() {
-            @Override
-            public okhttp3.Response intercept(Chain chain) throws IOException {
-                // 设置Header
-                Request newRequest = chain.request().newBuilder()
-                        .removeHeader("User-Agent")
-                        .addHeader("User-Agent","Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3440.84 Safari/537.36")
-                        .build() ;
-                return chain.proceed(newRequest);
-            }
-        }) ;
-        // 获取OkHttpClient对象
-        client = builder.build();
+    private void initHttp(){
+        HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
+        //设置日志Level
+        if (BuildConfig.DEBUG) {
+            // development build
+            logging.setLevel(HttpLoggingInterceptor.Level.BODY);
+        } else {
+            // production build
+            logging.setLevel(HttpLoggingInterceptor.Level.BASIC);
+        }
+        OkHttpClient.Builder httpClient = new OkHttpClient.Builder()
+                .connectTimeout(15, TimeUnit.SECONDS)
+                .readTimeout(15, TimeUnit.SECONDS)
+                .writeTimeout(15, TimeUnit.SECONDS)
+                //添加拦截器到OkHttp，这是最关键的
+                .addInterceptor(logging);
+
+        Log.w("tan","postBodyRequest");
+        Gson gson=new Gson();
+        //OkHttpClient client = builder.build();
         retrofit = new Retrofit.Builder()
                 .baseUrl("http://10.128.222.189:8080/")
-                .client(client)
+                .client(httpClient.build())
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
     }
@@ -68,25 +72,32 @@ public class sync {
         initHttp();
         //创建网络请求接口的实例
         Sync sync = retrofit.create(Sync.class);
-        // TODO
-        // 获取sync请求体
-        syncrequest = getSyncRequest();
-        // syncResponse为响应实体类，用来接受机器人返回的回复数据，以下为接口调用
-        Call<syncResponse> call = sync.request(syncrequest);
-        call.enqueue(new Callback<syncResponse>() {
+        // TODo
+        // syncResponse为响应实体类，用来接受回复数据，以下为接口调用
+        Call<SyncResponse> call = sync.request(getSyncRequest());
+        call.enqueue(new Callback<SyncResponse>() {
             @Override
-            public void onResponse(Call<syncResponse> call, retrofit2.Response<syncResponse> response) {
+            public void onResponse(Call<SyncResponse> call, retrofit2.Response<SyncResponse> response) {
                 if(response.code() == 200){
                     //取得返回数据
                     syncresponse = response.body();
+                    String temp = syncresponse.getLocalInsert().get(0).getDate();
                     //TODO ：
                     //获取同步信息后的操作
+                    localDelete();
+                    localInsert();
+                    localUpdate();
+                    if(syncresponse.getRemoteInsert() != null)
+                        requestInsert();
+                    if(syncresponse.getRemoteUpdate() != null)
+                        requestUpdate();
+
                     String str = "数据同步完成!";
                     Toast.makeText(context, str, Toast.LENGTH_LONG).show();
                 }else {
-                    errorbean bean = null;
+                    Errorbean bean = null;
                     Gson gson = new Gson();
-                    TypeAdapter<errorbean> adapter = gson.getAdapter(errorbean.class);
+                    TypeAdapter<Errorbean> adapter = gson.getAdapter(Errorbean.class);
                     try {
                         if (response.errorBody() != null)
                             bean = adapter.fromJson(
@@ -100,7 +111,7 @@ public class sync {
                 }
             }
             @Override
-            public void onFailure(Call<syncResponse> call, Throwable t) {
+            public void onFailure(Call<SyncResponse> call, Throwable t) {
                 //数据请求失败
                 Log.e("网络","失败");
                 String str = "数据同步失败，请检查网络设置!";
@@ -114,15 +125,15 @@ public class sync {
         Insert insert = retrofit.create(Insert.class);
         // TODO
         // 获取insert请求体
-        insertbean = getInsertRequest();
+        Insertbean insertbean = getInsertRequest();
         Call<ResponseBody> call = insert.request(insertbean);
         call.enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, retrofit2.Response<ResponseBody> response) {
                 if(response.code() != 200) {
-                    errorbean bean = null;
+                    Errorbean bean = null;
                     Gson gson = new Gson();
-                    TypeAdapter<errorbean> adapter = gson.getAdapter(errorbean.class);
+                    TypeAdapter<Errorbean> adapter = gson.getAdapter(Errorbean.class);
                     try {
                         if (response.errorBody() != null)
                             bean = adapter.fromJson(
@@ -148,15 +159,15 @@ public class sync {
         Update update = retrofit.create(Update.class);
         // TODO
         // 获取insert请求体
-        updatebean = getUpdateRequest();
+        Updatebean updatebean = getUpdateRequest();
         Call<ResponseBody> call = update.request(updatebean);
         call.enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, retrofit2.Response<ResponseBody> response) {
                 if(response.code() != 200) {
-                    errorbean bean = null;
+                    Errorbean bean = null;
                     Gson gson = new Gson();
-                    TypeAdapter<errorbean> adapter = gson.getAdapter(errorbean.class);
+                    TypeAdapter<Errorbean> adapter = gson.getAdapter(Errorbean.class);
                     try {
                         if (response.errorBody() != null)
                             bean = adapter.fromJson(
@@ -179,37 +190,63 @@ public class sync {
         });
     }
 
+    public void localInsert(){
+
+    }
+
+    public void localUpdate(){
+
+    }
+
+    public void localDelete(){
+
+    }
+
     public interface Sync {
         @Headers({"Content-Type: application/json","Accept: application/json"})
-        @GET("sync")
-        Call<syncResponse> request(@Body syncRequest syncrequest);
+        @POST("sync")
+        Call<SyncResponse> request(@Body SyncRequest syncrequest);
     }
     public interface Insert {
         @Headers({"Content-Type: application/json","Accept: application/json"})
         @POST("insert")
-        Call<ResponseBody> request(@Body insertbean insertbean);
+        Call<ResponseBody> request(@Body Insertbean insertbean);
     }
     public interface Update {
         @Headers({"Content-Type: application/json","Accept: application/json"})
         @POST("update")
-        Call<ResponseBody> request(@Body updatebean updatebean);
+        Call<ResponseBody> request(@Body Updatebean updatebean);
     }
 
 
-    public syncRequest getSyncRequest(){
-        syncRequest body = null;
-        // TODO
+    private SyncRequest getSyncRequest() {
+        SyncRequest body = new SyncRequest();
+        ItemDao itemDao = ItemDao.getInstance(context);
+        List<Item> itemList = itemDao.getItems();
+        if (itemList != null) {
+            for (Item item: itemList) {
+                body.setData(item);
+            }
+        }
         return body;
     }
 
-    public insertbean getInsertRequest(){
-        insertbean body = null;
-        // TODO
-        return  body;
+    private Insertbean getInsertRequest(){
+        Insertbean body = new Insertbean();
+        ItemDao itemDao = ItemDao.getInstance(context);
+        for(String str : syncresponse.getRemoteInsert()){
+            Item item = itemDao.get(str);
+            body.setData(item);
+        }
+        return body;
     }
-    public updatebean getUpdateRequest(){
-        updatebean body = null;
-        // TODO
+    private Updatebean getUpdateRequest(){
+        Updatebean body = new Updatebean();
+        ItemDao itemDao = ItemDao.getInstance(context);
+        for(String str : syncresponse.getRemoteUpdate()){
+            Item item = itemDao.get(str);
+            body.setData(item);
+        }
         return body;
     }
 }

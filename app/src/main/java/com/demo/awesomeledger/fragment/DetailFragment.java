@@ -10,22 +10,20 @@ import android.support.v7.widget.PopupMenu;
 import android.util.Log;
 import android.view.*;
 import android.widget.AdapterView;
-import android.widget.ListView;
 import android.widget.Toast;
-import com.demo.awesomeledger.MyListView.MyListView;
+import com.demo.awesomeledger.sync.sync;
+import com.demo.awesomeledger.view.MyListView;
 import com.demo.awesomeledger.R;
 import com.demo.awesomeledger.activity.AddItemActivity;
-import com.demo.awesomeledger.activity.MainActivity;
 import com.demo.awesomeledger.adapter.DetailListViewAdapter;
 import com.demo.awesomeledger.bean.Item;
 import com.demo.awesomeledger.dao.ItemDao;
-import com.demo.awesomeledger.Gson.errorbean;
+import com.demo.awesomeledger.gson.Errorbean;
 import com.google.gson.Gson;
 import com.google.gson.TypeAdapter;
 import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
-import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Retrofit;
@@ -44,16 +42,17 @@ public class DetailFragment extends Fragment implements AdapterView.OnItemClickL
 
     private int position;
     private boolean REFRESHING = false;
-    private MyListView listView;
+    public MyListView listView;
     private List<Item> itemList;
     private OnDeleteListener onDeleteListener;
+    private sync Sync;
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_detail, container, false);
-
+        Sync = new sync(getContext());
         listView = view.findViewById(R.id.item_container);
         // 单击监听
         listView.setOnItemClickListener(this);
@@ -61,93 +60,28 @@ public class DetailFragment extends Fragment implements AdapterView.OnItemClickL
         listView.setOnItemLongClickListener(this);
         //刷新监听
         listView.setonRefreshListener(new MyListView.OnRefreshListener(){
-            @SuppressLint("StaticFieldLeak")
             @Override
             public void onRefresh() {
                 new AsyncTask<Void, Void, Void>() {
                     protected Void doInBackground(Void... params) {
                         try {
-                            REFRESHING = true;
-                            requestSync();
+                            Sync.requestSync();
                         } catch (Exception e) {
-                            REFRESHING = false;
                             e.printStackTrace();
                         }
-                        Log.e("刷新","成功");
                         return null;
+                    }
+
+                    @Override
+                    protected void onPostExecute(Void result) {
+                        listView.onRefreshComplete();
                     }
                 }.execute(null, null, null);
             }
         });
         return view;
     }
-    private void requestSync(){
-        // 创建OkHttpClient.Builder对象
-        OkHttpClient.Builder builder = new OkHttpClient().newBuilder() ;
-        // 设置拦截器
-        builder.addInterceptor(new Interceptor() {
-            @Override
-            public okhttp3.Response intercept(Chain chain) throws IOException {
-                // 设置Header
-                Request newRequest = chain.request().newBuilder()
-                        .removeHeader("User-Agent")
-                        .addHeader("User-Agent","Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3440.84 Safari/537.36")
-                        .build() ;
-                return chain.proceed(newRequest);
-            }
-        }) ;
-        // 获取OkHttpClient对象
-        OkHttpClient client = builder.build();
-        Retrofit retrofit = new Retrofit.Builder()
-                                .baseUrl("http://10.128.222.189:8080/")
-                                .client(client)
-                                .addConverterFactory(GsonConverterFactory.create())
-                                .build();
-        Sync sync = retrofit.create(Sync.class);
-        Call<errorbean> call = sync.getInfo();
-        call.enqueue(new Callback<errorbean>() {
-            @Override
-            public void onResponse(Call<errorbean> call, retrofit2.Response<errorbean> response) {
-                REFRESHING = false;
-                if(response.code() == 200){
-                    listView.onRefreshComplete();
-                    errorbean bean = response.body();
-                    String str = "数据同步完成!";
-                    Toast.makeText(getContext(), str, Toast.LENGTH_LONG).show();
-                }else {
-                    listView.onRefreshComplete();
-                    errorbean bean = null;
-                    Gson gson = new Gson();
-                    TypeAdapter<errorbean> adapter = gson.getAdapter(errorbean.class);
-                    try {
-                        if (response.errorBody() != null)
-                            bean = adapter.fromJson(
-                                            response.errorBody().string());
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                    String str = bean.getMessage();
-                    Log.e("网络请求失败",str);
-                    Toast.makeText(getContext(),"数据同步失败！", Toast.LENGTH_LONG).show();
-                }
-            }
-            @Override
-            public void onFailure(Call<errorbean> call, Throwable t) {
-                REFRESHING = false;
-                //数据请求失败
-                Log.e("网络","失败");
-                listView.onRefreshComplete();
-                String str = "数据同步失败，请检查网络设置!";
-                Toast.makeText(getContext(), str, Toast.LENGTH_LONG).show();
-                t.printStackTrace();
-            }
-        });
-    }
-    public interface Sync {
-        @Headers({"Content-Type: application/json","Accept: application/json"})
-        @GET("sync")
-        Call<errorbean> getInfo();
-    }
+
     @Override
     public void onResume() {
         super.onResume();

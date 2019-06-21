@@ -4,7 +4,7 @@
               android:layout_width="match_parent"
               android:layout_height="match_parent">
 
-    <com.demo.awesomeledger.MyListView.MyListView
+    <com.demo.awesomeledger.view.MyListView
             android:layout_width="match_parent"
             android:layout_height="match_parent" android:id="@+id/item_container"/>
 </LinearLayout>

@@ -67,7 +67,7 @@ public class SyncUtil {
         Log.w("tan","postBodyRequest");
         Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd'T'HH:mm:ssXXX").create();
         retrofit = new Retrofit.Builder()
-                .baseUrl("http://192.168.43.114:8080/")
+                .baseUrl("http://10.128.222.189:8080/")
                 .client(httpClient.build())
                 .addConverterFactory(GsonConverterFactory.create(gson))
                 .build();

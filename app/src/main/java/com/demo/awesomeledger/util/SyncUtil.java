@@ -67,7 +67,7 @@ public class SyncUtil {
         Log.w("tan","postBodyRequest");
         Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd'T'HH:mm:ssXXX").create();
         retrofit = new Retrofit.Builder()
-                .baseUrl("http://10.128.222.189:8080/")
+                .baseUrl("http://192.168.43.114:8080/")
                 .client(httpClient.build())
                 .addConverterFactory(GsonConverterFactory.create(gson))
                 .build();
@@ -113,11 +113,32 @@ public class SyncUtil {
     private void requestInsert(List<String> remoteInsert){
         Insert insert = retrofit.create(Insert.class);
         InsertRequest insertRequest = getInsertRequest(remoteInsert);
-        request(insert.request(insertRequest));
+        insert.request(insertRequest).enqueue(new Callback<InsertResponse>() {
+            @Override
+            public void onResponse(@NonNull Call<InsertResponse> call, @NonNull retrofit2.Response<InsertResponse> response) {
+                if(response.code() == 200) {
+                    InsertResponse insertResponse = response.body();
+                    if (insertResponse != null) {
+                        localDelete(insertResponse.getLocalDelete());
+                    }
+                } else {
+                    handleError(response.errorBody());
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<InsertResponse> call, @NonNull Throwable t) {
+                Log.e("网络","失败");
+                Toast.makeText(context, "数据同步失败，请检查网络设置!", Toast.LENGTH_LONG).show();
+                t.printStackTrace();
+            }
+        });
     }
 
-    private void request(Call<ResponseBody> request) {
-        request.enqueue(new Callback<ResponseBody>() {
+    private void requestUpdate(List<String> remoteUpdate){
+        Update update = retrofit.create(Update.class);
+        UpdateRequest updateRequest = getUpdateRequest(remoteUpdate);
+        update.request(updateRequest).enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(@NonNull Call<ResponseBody> call, @NonNull retrofit2.Response<ResponseBody> response) {
                 if(response.code() != 200) {
@@ -149,12 +170,6 @@ public class SyncUtil {
         } else {
             Log.e("网络请求失败", "无回复错误信息，请检查服务器地址！");
         }
-    }
-
-    private void requestUpdate(List<String> remoteUpdate){
-        Update update = retrofit.create(Update.class);
-        UpdateRequest updateRequest = getUpdateRequest(remoteUpdate);
-        request(update.request(updateRequest));
     }
 
     private void localInsert(List<Item> localInsertList){
@@ -198,7 +213,7 @@ public class SyncUtil {
     public interface Insert {
         @Headers({"Content-Type: application/json","Accept: application/json"})
         @POST("insert")
-        Call<ResponseBody> request(@Body InsertRequest insertRequest);
+        Call<InsertResponse> request(@Body InsertRequest insertRequest);
     }
 
     public interface Update {
